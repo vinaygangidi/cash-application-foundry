@@ -35,6 +35,7 @@ from azure.ai.projects.models import (
     ThreadRun,
     RunStep,
 )
+from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 
 
@@ -556,25 +557,27 @@ def _extract_json(text: str) -> dict | None:
 
 
 def _build_client() -> AIProjectClient:
-    # Support both endpoint URL and legacy connection string formats
-    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
-    conn_str = os.environ.get("AIPROJECT_CONNECTION_STRING", "")
+    endpoint       = os.environ.get("AZURE_AI_ENDPOINT", "")
+    subscription   = os.environ.get("AZURE_SUBSCRIPTION_ID", "")
+    resource_group = os.environ.get("AZURE_RESOURCE_GROUP", "")
+    project_name   = os.environ.get("AZURE_PROJECT_NAME", "")
+    api_key        = os.environ.get("AZURE_API_KEY", "")
 
-    if endpoint and not endpoint.startswith("<"):
-        return AIProjectClient(
-            endpoint=endpoint,
-            credential=DefaultAzureCredential(),
-        )
-    elif conn_str and not conn_str.startswith("<"):
-        return AIProjectClient.from_connection_string(
-            conn_str=conn_str,
-            credential=DefaultAzureCredential(),
-        )
-    else:
+    if not (endpoint and subscription and resource_group and project_name):
         raise EnvironmentError(
-            "Set AZURE_AI_PROJECT_ENDPOINT (e.g. https://....services.ai.azure.com/api/projects/...) "
-            "or AIPROJECT_CONNECTION_STRING in backend/.env"
+            "Set AZURE_AI_ENDPOINT, AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, "
+            "AZURE_PROJECT_NAME in backend/.env"
         )
+
+    credential = AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
+
+    return AIProjectClient(
+        endpoint=endpoint,
+        subscription_id=subscription,
+        resource_group_name=resource_group,
+        project_name=project_name,
+        credential=credential,
+    )
 
 
 # ── FIXTURE FALLBACK (demo mode) ──────────────────────────────────────────────
