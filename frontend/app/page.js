@@ -11,53 +11,33 @@ const AGENT_META = {
 
 const AGENT_ORDER = Object.keys(AGENT_META);
 
-const EDGE_BADGE = {
-  // Original 20 edge cases
-  "EDGE: Perfect exact match":      { label: "Exact Match",         color: "#10b981", group: "AMOUNT" },
-  "EDGE: Multi-invoice":            { label: "Multi-Invoice",        color: "#3b82f6", group: "AMOUNT" },
-  "EDGE: Early pay discount":       { label: "Early Pay Disc.",      color: "#06b6d4", group: "AMOUNT" },
-  "EDGE: Unauthorized short pay":   { label: "Short Pay ⚠",          color: "#ef4444", group: "AMOUNT" },
-  "EDGE: Freight deduction":        { label: "Freight Deduct",       color: "#f59e0b", group: "AMOUNT" },
-  "EDGE: No remittance":            { label: "No Remittance",        color: "#8b5cf6", group: "REMITTANCE" },
-  "EDGE: Duplicate payment":        { label: "Duplicate ⚠",          color: "#ef4444", group: "TIMING" },
-  "EDGE: Overpayment":              { label: "Overpayment",          color: "#f97316", group: "AMOUNT" },
-  "EDGE: PO number reference":      { label: "PO Reference",         color: "#6366f1", group: "REMITTANCE" },
-  "EDGE: Bank wire fee":            { label: "Wire Fee",             color: "#64748b", group: "AMOUNT" },
-  "EDGE: FX payment":               { label: "FX/Multi-Currency",    color: "#0ea5e9", group: "FX" },
-  "EDGE: Installment payment":      { label: "Installment",          color: "#a855f7", group: "TIMING" },
-  "EDGE: Credit memo netted":       { label: "Credit Memo Net",      color: "#14b8a6", group: "AMOUNT" },
-  "EDGE: Exact match on partial":   { label: "Partial Close",        color: "#10b981", group: "AMOUNT" },
-  "EDGE: Vague remittance":         { label: "Vague Remittance",     color: "#f59e0b", group: "REMITTANCE" },
-  "EDGE: Exact match":              { label: "Exact Match",          color: "#10b981", group: "AMOUNT" },
-  "EDGE: NSF / returned ACH":       { label: "NSF Return ⚠",         color: "#dc2626", group: "TIMING" },
-  "EDGE: Large unmatched":          { label: "Unmatched ⚠",          color: "#dc2626", group: "REMITTANCE" },
-  "EDGE: Damage claim deduction":   { label: "Damage Claim",         color: "#f97316", group: "AMOUNT" },
-  "EDGE: Rounding / small balance": { label: "Write-off Cand.",      color: "#64748b", group: "AMOUNT" },
-  // New 15 edge cases — 7-category coverage
-  "EDGE: SWIFT 35-char name truncation": { label: "SWIFT Name Trunc.", color: "#7c3aed", group: "IDENTITY" },
-  "EDGE: DBA name":                     { label: "DBA Name",          color: "#7c3aed", group: "IDENTITY" },
-  "EDGE: Post-acquisition name":        { label: "Post-M&A Name",     color: "#7c3aed", group: "IDENTITY" },
-  "EDGE: Parent/subsidiary":            { label: "Parent Pays Sub",   color: "#db2777", group: "ENTITY" },
-  "EDGE: Third-party factoring":        { label: "Factoring Agent",   color: "#db2777", group: "ENTITY" },
-  "EDGE: Prepayment":                   { label: "Prepayment",        color: "#0284c7", group: "TIMING" },
-  "EDGE: Late early-pay discount":      { label: "Late Discount ⚠",   color: "#ef4444", group: "AMOUNT" },
-  "EDGE: Post-dated check":             { label: "Post-Dated Chk",    color: "#b45309", group: "TIMING" },
-  "EDGE: Stale check":                  { label: "Stale Check ⚠",     color: "#dc2626", group: "TIMING" },
-  "EDGE: Intercompany netting":         { label: "Interco Net",       color: "#0891b2", group: "ENTITY" },
-  "EDGE: Compliance/OFAC hold":         { label: "🔴 OFAC Hold",       color: "#dc2626", group: "COMPLIANCE" },
-  "EDGE: Wrong legal entity":           { label: "Wrong Entity ⚠",    color: "#dc2626", group: "COMPLIANCE" },
-  "EDGE: Disputed invoice payment":     { label: "Disputed Inv ⚠",    color: "#b91c1c", group: "COMPLIANCE" },
-  "EDGE: EDI 820 remittance pending":   { label: "EDI Pending",       color: "#8b5cf6", group: "REMITTANCE" },
-  "EDGE: Legacy invoice number":        { label: "Legacy Ref",        color: "#6366f1", group: "REMITTANCE" },
+// Maps agent-emitted flag codes (t.flags array) → display badge
+const FLAG_BADGE = {
+  MISSING_REMITTANCE:         { label: "No Remittance",      color: "#8b5cf6", group: "REMITTANCE" },
+  NO_INVOICE:                 { label: "No Invoice Ref",     color: "#8b5cf6", group: "REMITTANCE" },
+  LEGACY_INVOICE_REF:         { label: "Legacy Ref",         color: "#6366f1", group: "REMITTANCE" },
+  EDI_PENDING:                { label: "EDI Pending",        color: "#8b5cf6", group: "REMITTANCE" },
+  POSSIBLE_DUPLICATE:         { label: "Duplicate ⚠",        color: "#ef4444", group: "TIMING" },
+  NSF:                        { label: "NSF Return ⚠",       color: "#dc2626", group: "TIMING" },
+  POST_DATED_CHECK:           { label: "Post-Dated Chk",    color: "#b45309", group: "TIMING" },
+  STALE_CHECK:                { label: "Stale Check ⚠",     color: "#dc2626", group: "TIMING" },
+  PREPAYMENT:                 { label: "Prepayment",         color: "#0284c7", group: "TIMING" },
+  FX_PAYMENT:                 { label: "FX / Multi-Currency",color: "#0ea5e9", group: "FX" },
+  SWIFT_NAME_TRUNCATION:      { label: "SWIFT Name Trunc.", color: "#7c3aed", group: "IDENTITY" },
+  DBA_NAME:                   { label: "DBA Name",           color: "#7c3aed", group: "IDENTITY" },
+  POST_ACQUISITION_NAME:      { label: "Post-M&A Name",     color: "#7c3aed", group: "IDENTITY" },
+  PARENT_SUBSIDIARY_PAYMENT:  { label: "Parent Pays Sub",   color: "#db2777", group: "ENTITY" },
+  FACTORING_AGENT:            { label: "Factoring Agent",   color: "#db2777", group: "ENTITY" },
+  THIRD_PARTY_PAYMENT:        { label: "Third-Party",       color: "#db2777", group: "ENTITY" },
+  CROSS_BORDER_ENTITY:        { label: "Cross-Border",      color: "#db2777", group: "ENTITY" },
+  INTERCOMPANY_NETTING:       { label: "Interco Net",       color: "#0891b2", group: "ENTITY" },
+  LATE_DISCOUNT:              { label: "Late Discount ⚠",   color: "#ef4444", group: "AMOUNT" },
+  LARGE_ROUND_NUMBER:         { label: "Large Round Amt",   color: "#f97316", group: "AMOUNT" },
+  OFAC_SCREENING_TRIGGERED:   { label: "🔴 OFAC Hold",       color: "#dc2626", group: "COMPLIANCE" },
+  SANCTIONS_HOLD:             { label: "🔴 Sanctions Hold",  color: "#dc2626", group: "COMPLIANCE" },
+  WRONG_LEGAL_ENTITY:         { label: "Wrong Entity ⚠",    color: "#dc2626", group: "COMPLIANCE" },
+  DISPUTED_INVOICE:           { label: "Disputed Inv ⚠",    color: "#b91c1c", group: "COMPLIANCE" },
 };
-
-function getBadge(note) {
-  if (!note) return null;
-  for (const [key, val] of Object.entries(EDGE_BADGE)) {
-    if (note.startsWith(key)) return val;
-  }
-  return null;
-}
 
 function fmt(n) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(n);
@@ -202,8 +182,10 @@ const CATEGORY_META = {
 function EdgeCategoryLegend({ transactions }) {
   const counts = {};
   for (const t of (transactions || [])) {
-    const badge = getBadge(t.note);
-    if (badge?.group) counts[badge.group] = (counts[badge.group] || 0) + 1;
+    for (const flag of (t.flags || [])) {
+      const badge = FLAG_BADGE[flag];
+      if (badge?.group) counts[badge.group] = (counts[badge.group] || 0) + 1;
+    }
   }
 
   return (
@@ -239,7 +221,7 @@ function BankStatementTable({ transactions }) {
         </thead>
         <tbody>
           {transactions.map((t, i) => {
-            const badge = getBadge(t.note);
+            const badges = (t.flags || []).map(f => FLAG_BADGE[f]).filter(Boolean);
             return (
               <tr key={t.txn_id} style={{ background: i % 2 === 0 ? "#fff" : "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
                 <td style={{ padding: "7px 10px", fontFamily: "monospace", color: "#3b82f6", fontWeight: 600 }}>{t.txn_id}</td>
@@ -258,12 +240,14 @@ function BankStatementTable({ transactions }) {
                 <td style={{ padding: "7px 10px", color: "#64748b", maxWidth: 180, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {t.remittance_text || <span style={{ color: "#cbd5e1" }}>—</span>}
                 </td>
-                <td style={{ padding: "7px 10px" }}>
-                  {badge && (
-                    <span style={{ background: badge.color + "18", color: badge.color, borderRadius: 4, padding: "2px 7px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>
-                      {badge.label}
-                    </span>
-                  )}
+                <td style={{ padding: "7px 10px", minWidth: 120 }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+                    {badges.length > 0 ? badges.map((badge, bi) => (
+                      <span key={bi} style={{ background: badge.color + "18", color: badge.color, borderRadius: 4, padding: "2px 6px", fontSize: 9, fontWeight: 700, whiteSpace: "nowrap" }}>
+                        {badge.label}
+                      </span>
+                    )) : <span style={{ color: "#cbd5e1", fontSize: 10 }}>—</span>}
+                  </div>
                 </td>
               </tr>
             );
