@@ -556,16 +556,25 @@ def _extract_json(text: str) -> dict | None:
 
 
 def _build_client() -> AIProjectClient:
+    # Support both endpoint URL and legacy connection string formats
+    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
     conn_str = os.environ.get("AIPROJECT_CONNECTION_STRING", "")
-    if not conn_str or conn_str.startswith("<"):
-        raise EnvironmentError(
-            "AIPROJECT_CONNECTION_STRING not set. "
-            "Set it in backend/.env or use USE_FIXTURES=true for demo mode."
+
+    if endpoint and not endpoint.startswith("<"):
+        return AIProjectClient(
+            endpoint=endpoint,
+            credential=DefaultAzureCredential(),
         )
-    return AIProjectClient.from_connection_string(
-        conn_str=conn_str,
-        credential=DefaultAzureCredential(),
-    )
+    elif conn_str and not conn_str.startswith("<"):
+        return AIProjectClient.from_connection_string(
+            conn_str=conn_str,
+            credential=DefaultAzureCredential(),
+        )
+    else:
+        raise EnvironmentError(
+            "Set AZURE_AI_PROJECT_ENDPOINT (e.g. https://....services.ai.azure.com/api/projects/...) "
+            "or AIPROJECT_CONNECTION_STRING in backend/.env"
+        )
 
 
 # ── FIXTURE FALLBACK (demo mode) ──────────────────────────────────────────────
