@@ -2,11 +2,11 @@
 import { useState, useRef, useEffect } from "react";
 
 const AGENT_META = {
-  BankStatementIntelligenceAgent: { label: "Bank Statement Parser", icon: "🏦", color: "#3b82f6", bg: "#eff6ff" },
-  ARLedgerAgent:                  { label: "Open AR Ledger",        icon: "📒", color: "#10b981", bg: "#f0fdf4" },
-  ReconciliationAgent:            { label: "Reconciliation Engine", icon: "⚖️",  color: "#f59e0b", bg: "#fffbeb" },
-  MismatchReasoningAgent:         { label: "Mismatch Reasoning",   icon: "🧠", color: "#ef4444", bg: "#fef2f2" },
-  CashPostingAgent:               { label: "Cash Posting",          icon: "✅", color: "#8b5cf6", bg: "#f5f3ff" },
+  BankStatementIntelligenceAgent: { label: "Bank Statement Parser", icon: "🏦", color: "#3b82f6", bg: "#eff6ff", model: "gpt-5.4-mini", modelColor: "#059669" },
+  ARLedgerAgent:                  { label: "Open AR Ledger",        icon: "📒", color: "#10b981", bg: "#f0fdf4", model: "gpt-5.4-mini", modelColor: "#059669" },
+  ReconciliationAgent:            { label: "Reconciliation Engine", icon: "⚖️",  color: "#f59e0b", bg: "#fffbeb", model: "gpt-4o",       modelColor: "#2563eb" },
+  MismatchReasoningAgent:         { label: "Mismatch Reasoning",   icon: "🧠", color: "#ef4444", bg: "#fef2f2", model: "gpt-5",        modelColor: "#7c3aed" },
+  CashPostingAgent:               { label: "Cash Posting",          icon: "✅", color: "#8b5cf6", bg: "#f5f3ff", model: "gpt-4o",       modelColor: "#2563eb" },
 };
 
 const AGENT_ORDER = Object.keys(AGENT_META);
@@ -92,7 +92,12 @@ function AgentPipeline({ agentStates }) {
                 <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b" }}>
                   {i + 1}. {meta.label}
                 </div>
-                <div style={{ fontSize: 11, color: "#64748b" }}>{key}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+                  <span style={{ background: meta.modelColor + "18", color: meta.modelColor, borderRadius: 4, padding: "1px 6px", fontSize: 10, fontWeight: 700 }}>
+                    {meta.model}
+                  </span>
+                  <span style={{ fontSize: 10, color: "#94a3b8" }}>{key}</span>
+                </div>
               </div>
               <div style={{ textAlign: "right" }}>
                 {status === "idle" && <span style={{ fontSize: 11, color: "#94a3b8" }}>Waiting</span>}
@@ -442,7 +447,6 @@ function WorkQueue({ data }) {
   const items = data?.workqueue_items || data?.work_queue || [];
   if (!items.length) return null;
 
-  const RISK_COLOR = { CRITICAL: "#dc2626", HIGH: "#ef4444", MEDIUM: "#f59e0b", LOW: "#3b82f6" };
   const TEAM_COLOR = {
     AR_ANALYST: "#3b82f6", DEDUCTIONS_TEAM: "#f59e0b", CREDIT_MANAGER: "#8b5cf6",
     COMPLIANCE_OFFICER: "#dc2626", TREASURY: "#0891b2", LEGAL: "#7c3aed",
@@ -458,20 +462,20 @@ function WorkQueue({ data }) {
         <div style={{ background: "#fef2f2", border: "1.5px solid #fca5a5", borderRadius: 10, padding: "10px 14px", marginBottom: 12 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "#dc2626", marginBottom: 8 }}>🔴 CRITICAL — Same-Day Escalation Required</div>
           {criticalItems.map((item, i) => (
-            <WQItem key={i} item={item} RISK_COLOR={RISK_COLOR} TEAM_COLOR={TEAM_COLOR} />
+            <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} />
           ))}
         </div>
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {otherItems.map((item, i) => (
-          <WQItem key={i} item={item} RISK_COLOR={RISK_COLOR} TEAM_COLOR={TEAM_COLOR} />
+          <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} />
         ))}
       </div>
     </div>
   );
 }
 
-function WQItem({ item, RISK_COLOR, TEAM_COLOR }) {
+function WQItem({ item, TEAM_COLOR }) {
   const team = item.team || item.assigned_team || "AR_ANALYST";
   const teamColor = TEAM_COLOR[team] || "#64748b";
   const risk = item.risk_tier || "MEDIUM";

@@ -646,17 +646,25 @@ async def _run_live_swarm(
         in real time, including CodeInterpreter execution steps.
     """
     client = _build_client()
-    deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
+
+    # Per-agent model routing — match model capability to cognitive task complexity
+    AGENT_MODELS = {
+        "BankStatementIntelligenceAgent": os.environ.get("MODEL_BANK_AGENT",    "gpt-5.4-mini"),
+        "ARLedgerAgent":                  os.environ.get("MODEL_AR_AGENT",       "gpt-5.4-mini"),
+        "ReconciliationAgent":            os.environ.get("MODEL_RECON_AGENT",    "gpt-4o"),
+        "MismatchReasoningAgent":         os.environ.get("MODEL_REASONING_AGENT","gpt-5"),
+        "CashPostingAgent":               os.environ.get("MODEL_POSTING_AGENT",  "gpt-4o"),
+    }
 
     created_agents = {}
     thread = None
 
     try:
-        # Create all 5 agents upfront
+        # Create all 5 agents upfront — each with its assigned model
         for agent_name in AGENT_ORDER:
             tools_obj = AGENT_TOOLS.get(agent_name)
             kwargs = dict(
-                model=deployment,
+                model=AGENT_MODELS[agent_name],
                 name=agent_name,
                 instructions=AGENT_PROMPTS[agent_name],
             )
@@ -692,6 +700,7 @@ async def _run_live_swarm(
                 "label": meta["label"],
                 "icon":  meta["icon"],
                 "color": meta["color"],
+                "model": AGENT_MODELS[agent_name],
                 "tool":  "code_interpreter" if agent_name == "ReconciliationAgent" else None,
             }
 
