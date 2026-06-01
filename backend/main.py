@@ -110,43 +110,64 @@ async def analyze(request: AnalyzeRequest):
     all_results = {}
 
     async def event_stream():
+        # Keepalive pump — sends SSE comment every 10s to prevent Railway proxy timeout
+        keepalive_queue: asyncio.Queue = asyncio.Queue()
+
+        async def _keepalive():
+            while True:
+                await asyncio.sleep(10)
+                await keepalive_queue.put(": keepalive\n\n")
+
+        ka_task = asyncio.create_task(_keepalive())
+
+        async def _swarm():
+            try:
+                async for event in run_cash_application(request.bank_data, request.ar_data):
+                    event["run_id"] = run_id
+
+                    evt_type = event.get("event", "")
+                    if evt_type in ("agent_start", "agent_complete"):
+                        agent_events.append({
+                            "ts": datetime.now(timezone.utc).isoformat(),
+                            "event": evt_type,
+                            "agent": event.get("agent"),
+                            "model": event.get("model"),
+                        })
+
+                    if evt_type == "agent_complete" and event.get("output"):
+                        all_results[event["agent"]] = event["output"]
+
+                    if evt_type == "swarm_complete":
+                        _upload_blob(f"{run_id}/results.json", {
+                            "run_id": run_id,
+                            "started_at": started_at,
+                            "completed_at": datetime.now(timezone.utc).isoformat(),
+                            "results": event.get("results", all_results),
+                        })
+                        _upload_blob(f"{run_id}/agent_events.json", {
+                            "run_id": run_id,
+                            "events": agent_events,
+                        })
+
+                    await keepalive_queue.put(f"data: {json.dumps(event)}\n\n")
+
+            except Exception as e:
+                await keepalive_queue.put(
+                    f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+                )
+            finally:
+                await keepalive_queue.put(None)  # sentinel — stream done
+
+        asyncio.create_task(_swarm())
+
         try:
-            async for event in run_cash_application(request.bank_data, request.ar_data):
-                # Attach run_id to every event so the UI can display it
-                event["run_id"] = run_id
-
-                # Collect agent events for audit trail blob
-                evt_type = event.get("event", "")
-                if evt_type in ("agent_start", "agent_complete"):
-                    agent_events.append({
-                        "ts": datetime.now(timezone.utc).isoformat(),
-                        "event": evt_type,
-                        "agent": event.get("agent"),
-                        "model": event.get("model"),
-                    })
-
-                if evt_type == "agent_complete" and event.get("output"):
-                    all_results[event["agent"]] = event["output"]
-
-                if evt_type == "swarm_complete":
-                    # Save full results + audit trail to Blob
-                    _upload_blob(f"{run_id}/results.json", {
-                        "run_id": run_id,
-                        "started_at": started_at,
-                        "completed_at": datetime.now(timezone.utc).isoformat(),
-                        "results": event.get("results", all_results),
-                    })
-                    _upload_blob(f"{run_id}/agent_events.json", {
-                        "run_id": run_id,
-                        "events": agent_events,
-                    })
-
-                yield f"data: {json.dumps(event)}\n\n"
-                await asyncio.sleep(0)
-
-        except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+            while True:
+                item = await keepalive_queue.get()
+                if item is None:
+                    break
+                yield item
         finally:
+            ka_task.cancel()
             yield "data: [DONE]\n\n"
 
     return StreamingResponse(
