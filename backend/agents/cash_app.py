@@ -768,30 +768,43 @@ async def _run_live_swarm(
 
         response_text = ""
 
-        try:
-            stream = await client.chat.completions.create(
-                model=model,
-                messages=messages,
-                stream=True,
-                max_tokens=MAX_TOKENS[agent_name],
-                temperature=0.1,
-            )
+        # Retry up to 2 times on connection errors
+        last_error = None
+        for attempt in range(3):
+            try:
+                response_text = ""
+                stream = await client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    stream=True,
+                    max_tokens=MAX_TOKENS[agent_name],
+                    temperature=0.1,
+                    timeout=300,
+                )
 
-            async for chunk in stream:
-                if chunk.choices and chunk.choices[0].delta.content:
-                    token = chunk.choices[0].delta.content
-                    response_text += token
-                    yield {
-                        "event": "agent_token",
-                        "agent": agent_name,
-                        "token": token,
-                    }
+                async for chunk in stream:
+                    if chunk.choices and chunk.choices[0].delta.content:
+                        token = chunk.choices[0].delta.content
+                        response_text += token
+                        yield {
+                            "event": "agent_token",
+                            "agent": agent_name,
+                            "token": token,
+                        }
+                last_error = None
+                break  # success
 
-        except Exception as e:
+            except Exception as e:
+                last_error = e
+                if attempt < 2:
+                    await asyncio.sleep(2)
+                    continue
+
+        if last_error:
             yield {
                 "event":   "error",
                 "agent":   agent_name,
-                "message": f"{agent_name} failed: {e}",
+                "message": f"{agent_name} failed after 3 attempts: {last_error}",
             }
             return
 
