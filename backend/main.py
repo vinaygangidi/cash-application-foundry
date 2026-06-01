@@ -1,10 +1,54 @@
 import json
 import asyncio
+import os
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# ── Azure Application Insights ────────────────────────────────────────────────
+_conn_str = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "")
+if _conn_str:
+    try:
+        from azure.monitor.opentelemetry import configure_azure_monitor
+        configure_azure_monitor(connection_string=_conn_str)
+    except Exception:
+        pass  # telemetry is non-critical
+
+# ── Azure Blob Storage ────────────────────────────────────────────────────────
+_storage_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL", "")
+_blob_service = None
+if _storage_url:
+    try:
+        from azure.storage.blob import BlobServiceClient
+        from azure.identity import DefaultAzureCredential
+        _blob_service = BlobServiceClient(
+            account_url=_storage_url,
+            credential=DefaultAzureCredential(),
+        )
+    except Exception:
+        pass  # storage is non-critical
+
+BLOB_CONTAINER = "cash-app-runs"
+
+
+def _upload_blob(path: str, data: dict):
+    """Upload JSON to Azure Blob Storage. Silently skips if storage not configured."""
+    if not _blob_service:
+        return
+    try:
+        client = _blob_service.get_blob_client(container=BLOB_CONTAINER, blob=path)
+        client.upload_blob(json.dumps(data, indent=2), overwrite=True)
+    except Exception:
+        pass
+
 
 from agents.cash_app import run_cash_application
 
@@ -27,7 +71,15 @@ class AnalyzeRequest(BaseModel):
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "cash-application-foundry"}
+    storage_configured = _blob_service is not None
+    telemetry_configured = bool(_conn_str)
+    return {
+        "status": "ok",
+        "service": "cash-application-foundry",
+        "azure_blob_storage": storage_configured,
+        "azure_app_insights": telemetry_configured,
+        "use_fixtures": os.getenv("USE_FIXTURES", "true"),
+    }
 
 
 @app.get("/demo-data")
@@ -39,11 +91,59 @@ async def demo_data():
 
 @app.post("/analyze")
 async def analyze(request: AnalyzeRequest):
+    run_id = str(uuid.uuid4())
+    started_at = datetime.now(timezone.utc).isoformat()
+
+    # Save inputs to Azure Blob Storage immediately
+    _upload_blob(f"{run_id}/bank_statement.json", {
+        "run_id": run_id,
+        "started_at": started_at,
+        "data": request.bank_data,
+    })
+    _upload_blob(f"{run_id}/open_ar.json", {
+        "run_id": run_id,
+        "started_at": started_at,
+        "data": request.ar_data,
+    })
+
+    agent_events = []
+    all_results = {}
+
     async def event_stream():
         try:
             async for event in run_cash_application(request.bank_data, request.ar_data):
+                # Attach run_id to every event so the UI can display it
+                event["run_id"] = run_id
+
+                # Collect agent events for audit trail blob
+                evt_type = event.get("event", "")
+                if evt_type in ("agent_start", "agent_complete"):
+                    agent_events.append({
+                        "ts": datetime.now(timezone.utc).isoformat(),
+                        "event": evt_type,
+                        "agent": event.get("agent"),
+                        "model": event.get("model"),
+                    })
+
+                if evt_type == "agent_complete" and event.get("output"):
+                    all_results[event["agent"]] = event["output"]
+
+                if evt_type == "swarm_complete":
+                    # Save full results + audit trail to Blob
+                    _upload_blob(f"{run_id}/results.json", {
+                        "run_id": run_id,
+                        "started_at": started_at,
+                        "completed_at": datetime.now(timezone.utc).isoformat(),
+                        "results": event.get("results", all_results),
+                    })
+                    _upload_blob(f"{run_id}/agent_events.json", {
+                        "run_id": run_id,
+                        "events": agent_events,
+                    })
+
                 yield f"data: {json.dumps(event)}\n\n"
                 await asyncio.sleep(0)
+
         except Exception as e:
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
         finally:
