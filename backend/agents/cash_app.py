@@ -685,18 +685,67 @@ async def _run_live_swarm(
         "CashPostingAgent":               os.environ.get("MODEL_POSTING_AGENT",   "gpt-4o"),
     }
 
-    # Raw seed content for extraction agents (1 & 2)
-    seed_content = json.dumps({
-        "task": (
-            "Perform Cash Application: match bank statement payments to open AR invoices. "
-            "Handle all edge cases including short pays, deductions, duplicates, "
-            "multi-invoice payments, FX, and missing remittance."
-        ),
-        "bank_statement": bank_data,
-        "open_ar": ar_data,
-    }, indent=None)
+    # Max tokens per agent — reconciliation + posting outputs are large
+    MAX_TOKENS = {
+        "BankStatementIntelligenceAgent": 4096,
+        "ARLedgerAgent":                  4096,
+        "ReconciliationAgent":            8192,
+        "MismatchReasoningAgent":         6144,
+        "CashPostingAgent":               6144,
+    }
 
     all_results: dict[str, dict] = {}
+
+    def _build_user_content(agent_name: str) -> str:
+        """Give each agent only the data it needs — avoids context bloat."""
+        if agent_name == "BankStatementIntelligenceAgent":
+            return json.dumps({
+                "task": "Parse and normalize this bank statement. Extract all transactions with flags.",
+                "bank_statement": bank_data,
+            }, indent=None)
+
+        if agent_name == "ARLedgerAgent":
+            return json.dumps({
+                "task": "Structure this open AR ledger data. Build customer index, aging, alias registry.",
+                "open_ar": ar_data,
+            }, indent=None)
+
+        if agent_name == "ReconciliationAgent":
+            bank = all_results.get("BankStatementIntelligenceAgent", {})
+            ar   = all_results.get("ARLedgerAgent", {})
+            return json.dumps({
+                "task": "Match every bank transaction to open AR invoices using the 8-tier hierarchy.",
+                "normalized_transactions": bank.get("transactions", []),
+                "bank_summary":            bank.get("summary", {}),
+                "invoices":                ar.get("invoices", []),
+                "customer_index":          ar.get("customer_index", {}),
+                "legacy_invoice_map":      ar.get("legacy_invoice_map", {}),
+                "compliance_flags":        ar.get("compliance_flags", {}),
+                "intercompany_netting":    ar.get("intercompany_netting", []),
+            }, indent=None)
+
+        if agent_name == "MismatchReasoningAgent":
+            recon   = all_results.get("ReconciliationAgent", {})
+            matches = recon.get("matches", [])
+            exceptions = [m for m in matches if m.get("exception")]
+            return json.dumps({
+                "task": "Analyze each exception. Provide reasoning, risk tier, GL code, recommended action.",
+                "exception_matches":      exceptions,
+                "reconciliation_summary": recon.get("reconciliation_summary", {}),
+            }, indent=None)
+
+        if agent_name == "CashPostingAgent":
+            recon    = all_results.get("ReconciliationAgent", {})
+            mismatch = all_results.get("MismatchReasoningAgent", {})
+            return json.dumps({
+                "task": "Generate final GL posting instructions and workqueue items for every transaction.",
+                "all_matches":          recon.get("matches", []),
+                "reconciliation_summary": recon.get("reconciliation_summary", {}),
+                "exception_analysis":   mismatch.get("exception_analysis", []),
+                "exception_summary":    mismatch.get("exception_summary", {}),
+            }, indent=None)
+
+        return json.dumps({"task": "Continue.", "prior_outputs": all_results}, indent=None)
 
     for agent_name in AGENT_ORDER:
         meta  = AGENT_META[agent_name]
@@ -712,18 +761,9 @@ async def _run_live_swarm(
             "tool":  "code_interpreter" if agent_name == "ReconciliationAgent" else None,
         }
 
-        # Extraction agents get raw data; reasoning agents get prior structured outputs
-        if agent_name in ("BankStatementIntelligenceAgent", "ARLedgerAgent"):
-            user_content = seed_content
-        else:
-            user_content = json.dumps({
-                "task": "Continue Cash Application using the structured outputs from prior agents.",
-                "prior_agent_outputs": all_results,
-            }, indent=None)
-
         messages = [
-            {"role": "system",  "content": AGENT_PROMPTS[agent_name]},
-            {"role": "user",    "content": user_content},
+            {"role": "system", "content": AGENT_PROMPTS[agent_name]},
+            {"role": "user",   "content": _build_user_content(agent_name)},
         ]
 
         response_text = ""
@@ -733,7 +773,7 @@ async def _run_live_swarm(
                 model=model,
                 messages=messages,
                 stream=True,
-                max_tokens=4096,
+                max_tokens=MAX_TOKENS[agent_name],
                 temperature=0.1,
             )
 
