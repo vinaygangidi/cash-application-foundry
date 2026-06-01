@@ -544,6 +544,17 @@ AGENT_TOOLS = {
 
 def _extract_json(text: str) -> dict | None:
     """Extract the first valid JSON object from agent response text."""
+    import re
+
+    # Strip markdown code fences (```json ... ``` or ``` ... ```)
+    fence_match = re.search(r"```(?:json)?\s*(\{[\s\S]*\})\s*```", text)
+    if fence_match:
+        try:
+            return json.loads(fence_match.group(1))
+        except Exception:
+            pass
+
+    # Find first { to last } — handles trailing "NEXT: AgentName" text
     try:
         start = text.find("{")
         end   = text.rfind("}") + 1
@@ -685,13 +696,13 @@ async def _run_live_swarm(
         "CashPostingAgent":               os.environ.get("MODEL_POSTING_AGENT",   "gpt-4o"),
     }
 
-    # Max tokens per agent — reconciliation + posting outputs are large
+    # Max tokens per agent — bank/AR agents produce ~5,300 tokens with the fixture dataset
     MAX_TOKENS = {
-        "BankStatementIntelligenceAgent": 4096,
-        "ARLedgerAgent":                  4096,
+        "BankStatementIntelligenceAgent": 8192,
+        "ARLedgerAgent":                  8192,
         "ReconciliationAgent":            8192,
         "MismatchReasoningAgent":         6144,
-        "CashPostingAgent":               6144,
+        "CashPostingAgent":               8192,
     }
 
     all_results: dict[str, dict] = {}
@@ -767,12 +778,14 @@ async def _run_live_swarm(
         ]
 
         response_text = ""
+        finish_reason = None
 
         # Retry up to 2 times on connection errors
         last_error = None
         for attempt in range(3):
             try:
                 response_text = ""
+                finish_reason = None
                 stream = await client.chat.completions.create(
                     model=model,
                     messages=messages,
@@ -783,14 +796,19 @@ async def _run_live_swarm(
                 )
 
                 async for chunk in stream:
-                    if chunk.choices and chunk.choices[0].delta.content:
-                        token = chunk.choices[0].delta.content
-                        response_text += token
-                        yield {
-                            "event": "agent_token",
-                            "agent": agent_name,
-                            "token": token,
-                        }
+                    if chunk.choices:
+                        choice = chunk.choices[0]
+                        if choice.delta.content:
+                            token = choice.delta.content
+                            response_text += token
+                            yield {
+                                "event": "agent_token",
+                                "agent": agent_name,
+                                "token": token,
+                            }
+                        if choice.finish_reason:
+                            finish_reason = choice.finish_reason
+
                 last_error = None
                 break  # success
 
@@ -813,12 +831,15 @@ async def _run_live_swarm(
             all_results[agent_name] = parsed
 
         yield {
-            "event":  "agent_complete",
-            "agent":  agent_name,
-            "label":  meta["label"],
-            "icon":   meta["icon"],
-            "color":  meta["color"],
-            "output": parsed or {"raw": response_text[:800]},
+            "event":        "agent_complete",
+            "agent":        agent_name,
+            "label":        meta["label"],
+            "icon":         meta["icon"],
+            "color":        meta["color"],
+            "output":       parsed or {"raw": response_text[:800]},
+            "response_chars": len(response_text),
+            "finish_reason":  finish_reason,
+            "parse_ok":       parsed is not None,
         }
 
         await asyncio.sleep(0.05)
