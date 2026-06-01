@@ -2,11 +2,10 @@
 
 A team of 5 AI agents that takes your bank statement and open invoices, figures out what matches what, and tells your finance team exactly what to post — including the hard cases that used to take hours to sort out manually.
 
-> Built for Microsoft Build AI Hackathon 2026 · Theme 05 — Agent Swarms · ₹6,00,000 Prize Pool
+> Built for Microsoft Build AI Hackathon 2026 · Theme 05 — Agent Swarms
 
 **Live Demo:** [cash-application-foundry.vercel.app](https://cash-application-foundry.vercel.app) · **Architecture Docs:** [vinaygangidi.github.io/cash-application-foundry](https://vinaygangidi.github.io/cash-application-foundry)
 
----
 
 ## What problem does this solve?
 
@@ -23,7 +22,6 @@ An experienced AR analyst handles maybe 8–10 of these edge cases per hour. Our
 
 **The scale of the problem:** US companies process $2.3 trillion in AR annually. Each day a payment sits unposted is one more day of working capital tied up. For a $500M revenue company, that's roughly $1.4M per DSO day.
 
----
 
 ## How it works — the 5-agent pipeline
 
@@ -71,7 +69,6 @@ Agent 5 — Cash Posting                   (GPT-4o)
 
 The whole thing streams in real time — you watch each agent work as it happens.
 
----
 
 ## Why we built it this way — the multi-agent framework
 
@@ -106,7 +103,6 @@ Each agent module (`bank_statement_agent.py`, `ar_ledger_agent.py`, etc.) contai
 
 This means you can tune, test, or replace any single agent without touching the others. Want to upgrade only the Reconciliation Agent to a newer model? Change one line in `reconciliation_agent.py`. Want to try a different prompt for exception reasoning? Edit `mismatch_agent.py`. The orchestrator (`cash_app.py`) just imports them all and runs the pipeline.
 
----
 
 ## How we're using Microsoft's tech stack
 
@@ -134,7 +130,6 @@ Running everything on GPT-4o would cost about 4x more per batch. Running everyth
 
 **Real-time SSE streaming** — The frontend connects to a single `/analyze` endpoint that streams every token from every agent as it's generated. An `asyncio.Queue` keepalive sends a heartbeat every 10 seconds so the Railway proxy doesn't drop the connection during the gaps between agents.
 
----
 
 ## The 35 edge cases we handle
 
@@ -148,7 +143,6 @@ Running everything on GPT-4o would cost about 4x more per batch. Running everyth
 | **FX & international** (2) | EUR SWIFT payment with FX conversion, FX rate verification via Python |
 | **Compliance & legal** (3) | OFAC/sanctions hold (same-day escalation), disputed invoice block, legal hold escalation |
 
----
 
 ## Code structure
 
@@ -177,7 +171,6 @@ cash-application-foundry/
 └── README.md
 ```
 
----
 
 ## Running it locally
 
@@ -231,7 +224,6 @@ AZURE_CLIENT_SECRET=<sp-secret>
 AZURE_TENANT_ID=<tenant-id>
 ```
 
----
 
 ## Deploying to Railway + Vercel
 
@@ -248,7 +240,6 @@ AZURE_TENANT_ID=<tenant-id>
 2. Add `NEXT_PUBLIC_API_URL=https://your-railway-app.up.railway.app`
 3. Every push to `main` deploys automatically
 
----
 
 ## MVP vs where this goes in production
 
@@ -265,7 +256,6 @@ The current build is optimized for the hackathon — reliable demo, real Azure i
 | Scaling | 1 Railway container | Auto-scale 1–20 workers on queue depth | Azure Container Apps + KEDA |
 | ERP write-back | UI only | Auto-post to SAP / Oracle / NetSuite | Azure Logic Apps |
 
----
 
 ## Audit trail — every AI decision is traceable
 
@@ -304,7 +294,6 @@ CREATE TABLE work_queue (
 
 This gives auditors a complete chain from source document → AI reasoning → human decision → GL posting. SOX compliant, 7-year retention.
 
----
 
 ## Security
 
@@ -314,13 +303,11 @@ This gives auditors a complete chain from source document → AI reasoning → h
 - **Segregation of duties.** The agent that generates a GL posting cannot approve it. Human sign-off required above $10K.
 - **All data encrypted at rest** (AES-256) and in transit (TLS 1.3). Private Endpoints for backend services in production — nothing exposed to the public internet.
 
----
 
 ## The compounding advantage
 
 Every batch the system processes generates labeled training data. After enough runs, the Mismatch Reasoning Agent can be fine-tuned on your company's specific deduction patterns — your freight allowance rates, your top customers' payment habits, your contract terms. A fine-tuned smaller model outperforms a generic large one on domain-specific tasks, and costs less to run. After 12 months of production use, this system would be significantly more accurate than anything a competitor could deploy on day one.
 
----
 
 ## Scale roadmap
 
@@ -330,12 +317,10 @@ Every batch the system processes generates labeled training data. After enough r
 
 **Phase 3 — 12 months** (enterprise platform): 50+ companies, 1M+ txns/month, SAP/Oracle/NetSuite connectors, multi-region, auto-scaling, fine-tuned models, Azure Marketplace listing
 
----
 
 ## Team
 
 **Vinay Gangidi** — [vinay.gangidi@gmail.com](mailto:vinay.gangidi@gmail.com)
 
----
 
 *Microsoft Build AI Hackathon 2026 · Theme 05 — Agent Swarms · [github.com/vinaygangidi/cash-application-foundry](https://github.com/vinaygangidi/cash-application-foundry)*
