@@ -25,18 +25,16 @@ import json
 import os
 from typing import AsyncGenerator
 
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    CodeInterpreterTool,
-    MessageRole,
-    AgentStreamEvent,
-    MessageDeltaChunk,
-    RunStepDeltaChunk,
-    ThreadRun,
-    RunStep,
-)
-from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
+from openai import AsyncAzureOpenAI
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+
+# Optional: azure-ai-projects for register_agents.py script (not needed for inference)
+try:
+    from azure.ai.projects import AIProjectClient
+    from azure.ai.projects.models import CodeInterpreterTool
+    _AZURE_PROJECTS_AVAILABLE = True
+except ImportError:
+    _AZURE_PROJECTS_AVAILABLE = False
 
 
 # ── AGENT SYSTEM PROMPTS ──────────────────────────────────────────────────────
@@ -536,9 +534,9 @@ AGENT_PROMPTS = {
     "CashPostingAgent":               CASH_POSTING_PROMPT,
 }
 
-# ReconciliationAgent gets CodeInterpreterTool for exact arithmetic verification
+# ReconciliationAgent gets code_interpreter for exact arithmetic verification
 AGENT_TOOLS = {
-    "ReconciliationAgent": CodeInterpreterTool(),
+    "ReconciliationAgent": [{"type": "code_interpreter"}],
 }
 
 
@@ -556,27 +554,49 @@ def _extract_json(text: str) -> dict | None:
     return None
 
 
-def _build_client() -> AIProjectClient:
+def _build_openai_client() -> AsyncAzureOpenAI:
+    """Build AsyncAzureOpenAI client using API key or DefaultAzureCredential."""
+    endpoint = os.environ.get("AZURE_AI_ENDPOINT", "")
+    api_key  = os.environ.get("AZURE_API_KEY", "")
+    api_ver  = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-12-01-preview")
+
+    if not endpoint:
+        raise EnvironmentError("Set AZURE_AI_ENDPOINT in backend/.env")
+
+    if api_key:
+        return AsyncAzureOpenAI(
+            azure_endpoint=endpoint,
+            api_key=api_key,
+            api_version=api_ver,
+        )
+
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(
+        credential, "https://cognitiveservices.azure.com/.default"
+    )
+    return AsyncAzureOpenAI(
+        azure_endpoint=endpoint,
+        azure_ad_token_provider=token_provider,
+        api_version=api_ver,
+    )
+
+
+def _build_client():
+    """Legacy AIProjectClient builder — used by register_agents.py script only."""
+    if not _AZURE_PROJECTS_AVAILABLE:
+        raise ImportError("azure-ai-projects is not installed. Run: pip install azure-ai-projects")
     endpoint       = os.environ.get("AZURE_AI_ENDPOINT", "")
     subscription   = os.environ.get("AZURE_SUBSCRIPTION_ID", "")
     resource_group = os.environ.get("AZURE_RESOURCE_GROUP", "")
     project_name   = os.environ.get("AZURE_PROJECT_NAME", "")
-    api_key        = os.environ.get("AZURE_API_KEY", "")
-
     if not (endpoint and subscription and resource_group and project_name):
-        raise EnvironmentError(
-            "Set AZURE_AI_ENDPOINT, AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, "
-            "AZURE_PROJECT_NAME in backend/.env"
-        )
-
-    credential = AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
-
+        raise EnvironmentError("Set AZURE_AI_ENDPOINT, AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, AZURE_PROJECT_NAME")
     return AIProjectClient(
         endpoint=endpoint,
         subscription_id=subscription,
         resource_group_name=resource_group,
         project_name=project_name,
-        credential=credential,
+        credential=DefaultAzureCredential(),
     )
 
 
@@ -646,165 +666,115 @@ async def _run_live_swarm(
     ar_data: dict,
 ) -> AsyncGenerator[dict, None]:
     """
-    Live swarm using Azure AI Foundry Agent Service.
+    Live swarm using Azure AI Foundry via OpenAI-compatible chat completions.
 
     Architecture:
-      - Each of the 5 agents is created as an AI Foundry Agent with its own
-        system prompt and tools (ReconciliationAgent gets CodeInterpreterTool).
-      - Agents run sequentially on a shared thread — each agent's response
-        becomes the next agent's context, exactly like passing structured
-        JSON between specialists.
-      - Streaming via project_client.agents.create_stream() — tokens arrive
-        in real time, including CodeInterpreter execution steps.
+      - Each agent runs as a sequential chat completion with its own system prompt.
+      - Agents 1-2 (extraction) receive the full raw input data.
+      - Agents 3-5 receive compact structured outputs from prior agents — saves tokens.
+      - All agents stream tokens in real time via AsyncAzureOpenAI.
+      - ReconciliationAgent is instructed to show its math inline (no sandbox needed).
     """
-    client = _build_client()
+    client = _build_openai_client()
 
-    # Per-agent model routing — match model capability to cognitive task complexity
     AGENT_MODELS = {
-        "BankStatementIntelligenceAgent": os.environ.get("MODEL_BANK_AGENT",    "gpt-5.4-mini"),
-        "ARLedgerAgent":                  os.environ.get("MODEL_AR_AGENT",       "gpt-5.4-mini"),
-        "ReconciliationAgent":            os.environ.get("MODEL_RECON_AGENT",    "gpt-4o"),
-        "MismatchReasoningAgent":         os.environ.get("MODEL_REASONING_AGENT","gpt-5"),
-        "CashPostingAgent":               os.environ.get("MODEL_POSTING_AGENT",  "gpt-4o"),
+        "BankStatementIntelligenceAgent": os.environ.get("MODEL_BANK_AGENT",     "gpt-4o-mini"),
+        "ARLedgerAgent":                  os.environ.get("MODEL_AR_AGENT",        "gpt-4o-mini"),
+        "ReconciliationAgent":            os.environ.get("MODEL_RECON_AGENT",     "gpt-4o"),
+        "MismatchReasoningAgent":         os.environ.get("MODEL_REASONING_AGENT", "gpt-4o"),
+        "CashPostingAgent":               os.environ.get("MODEL_POSTING_AGENT",   "gpt-4o"),
     }
 
-    created_agents = {}
-    thread = None
+    # Raw seed content for extraction agents (1 & 2)
+    seed_content = json.dumps({
+        "task": (
+            "Perform Cash Application: match bank statement payments to open AR invoices. "
+            "Handle all edge cases including short pays, deductions, duplicates, "
+            "multi-invoice payments, FX, and missing remittance."
+        ),
+        "bank_statement": bank_data,
+        "open_ar": ar_data,
+    }, indent=None)
 
-    try:
-        # Create all 5 agents upfront — each with its assigned model
-        for agent_name in AGENT_ORDER:
-            tools_obj = AGENT_TOOLS.get(agent_name)
-            kwargs = dict(
-                model=AGENT_MODELS[agent_name],
-                name=agent_name,
-                instructions=AGENT_PROMPTS[agent_name],
-            )
-            if tools_obj:
-                kwargs["tools"] = tools_obj.definitions
-                kwargs["tool_resources"] = tools_obj.resources
-            created_agents[agent_name] = client.agents.create_agent(**kwargs)
+    all_results: dict[str, dict] = {}
 
-        # Single shared thread — all agents read the full conversation history
-        thread = client.agents.create_thread()
-
-        # Seed message: the raw input data both first agents need
-        seed_content = json.dumps({
-            "task": "Perform Cash Application: match bank statement payments to open AR invoices. Handle all edge cases including short pays, deductions, duplicates, multi-invoice payments, FX, and missing remittance.",
-            "bank_statement": bank_data,
-            "open_ar": ar_data,
-        })
-        client.agents.create_message(
-            thread_id=thread.id,
-            role=MessageRole.USER,
-            content=seed_content,
-        )
-
-        all_results: dict[str, dict] = {}
-
-        for agent_name in AGENT_ORDER:
-            meta = AGENT_META[agent_name]
-            agent = created_agents[agent_name]
-
-            yield {
-                "event": "agent_start",
-                "agent": agent_name,
-                "label": meta["label"],
-                "icon":  meta["icon"],
-                "color": meta["color"],
-                "model": AGENT_MODELS[agent_name],
-                "tool":  "code_interpreter" if agent_name == "ReconciliationAgent" else None,
-            }
-
-            response_text = ""
-
-            # Stream this agent's run
-            with client.agents.create_stream(
-                thread_id=thread.id,
-                agent_id=agent.id,
-            ) as stream:
-                for event_type, event_data, _ in stream:
-
-                    # Text token from the LLM
-                    if isinstance(event_data, MessageDeltaChunk):
-                        for delta in (event_data.delta.content or []):
-                            token = getattr(delta, "text", {})
-                            if isinstance(token, dict):
-                                token = token.get("value", "")
-                            elif hasattr(token, "value"):
-                                token = token.value
-                            else:
-                                token = str(token) if token else ""
-                            if token:
-                                response_text += token
-                                yield {
-                                    "event": "agent_token",
-                                    "agent": agent_name,
-                                    "token": token,
-                                }
-
-                    # CodeInterpreter tool call step
-                    elif isinstance(event_data, RunStepDeltaChunk):
-                        for step_detail in (event_data.delta.step_details or []):
-                            if hasattr(step_detail, "tool_calls"):
-                                for tc in (step_detail.tool_calls or []):
-                                    if hasattr(tc, "code_interpreter"):
-                                        snippet = getattr(tc.code_interpreter, "input", "")
-                                        if snippet:
-                                            yield {
-                                                "event": "tool_call",
-                                                "agent": agent_name,
-                                                "tool":  "code_interpreter",
-                                                "snippet": snippet[:300],
-                                            }
-
-            parsed = _extract_json(response_text)
-            if parsed:
-                all_results[agent_name] = parsed
-
-            # After Agent 2 (ARLedgerAgent) completes, replace the raw seed
-            # message context with compact structured outputs to save tokens
-            # for agents 3-5 (they don't need the raw documents).
-            if agent_name == "ARLedgerAgent" and all_results:
-                compact = json.dumps({
-                    "task": "Continue Cash Application using structured findings from prior agents.",
-                    "prior_agent_outputs": all_results,
-                })
-                client.agents.create_message(
-                    thread_id=thread.id,
-                    role=MessageRole.USER,
-                    content=compact,
-                )
-
-            yield {
-                "event":  "agent_complete",
-                "agent":  agent_name,
-                "label":  meta["label"],
-                "icon":   meta["icon"],
-                "color":  meta["color"],
-                "output": parsed or {"raw": response_text[:800]},
-            }
-
-            await asyncio.sleep(0.05)
+    for agent_name in AGENT_ORDER:
+        meta  = AGENT_META[agent_name]
+        model = AGENT_MODELS[agent_name]
 
         yield {
-            "event":  "swarm_complete",
-            "results": all_results,
-            "final":   all_results.get("CashPostingAgent", {}),
+            "event": "agent_start",
+            "agent": agent_name,
+            "label": meta["label"],
+            "icon":  meta["icon"],
+            "color": meta["color"],
+            "model": model,
+            "tool":  "code_interpreter" if agent_name == "ReconciliationAgent" else None,
         }
 
-    finally:
-        # Clean up AI Foundry agents and thread (they're billed while alive)
-        for agent in created_agents.values():
-            try:
-                client.agents.delete_agent(agent.id)
-            except Exception:
-                pass
-        if thread:
-            try:
-                client.agents.delete_thread(thread.id)
-            except Exception:
-                pass
+        # Extraction agents get raw data; reasoning agents get prior structured outputs
+        if agent_name in ("BankStatementIntelligenceAgent", "ARLedgerAgent"):
+            user_content = seed_content
+        else:
+            user_content = json.dumps({
+                "task": "Continue Cash Application using the structured outputs from prior agents.",
+                "prior_agent_outputs": all_results,
+            }, indent=None)
+
+        messages = [
+            {"role": "system",  "content": AGENT_PROMPTS[agent_name]},
+            {"role": "user",    "content": user_content},
+        ]
+
+        response_text = ""
+
+        try:
+            stream = await client.chat.completions.create(
+                model=model,
+                messages=messages,
+                stream=True,
+                max_tokens=4096,
+                temperature=0.1,
+            )
+
+            async for chunk in stream:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    token = chunk.choices[0].delta.content
+                    response_text += token
+                    yield {
+                        "event": "agent_token",
+                        "agent": agent_name,
+                        "token": token,
+                    }
+
+        except Exception as e:
+            yield {
+                "event":   "error",
+                "agent":   agent_name,
+                "message": f"{agent_name} failed: {e}",
+            }
+            return
+
+        parsed = _extract_json(response_text)
+        if parsed:
+            all_results[agent_name] = parsed
+
+        yield {
+            "event":  "agent_complete",
+            "agent":  agent_name,
+            "label":  meta["label"],
+            "icon":   meta["icon"],
+            "color":  meta["color"],
+            "output": parsed or {"raw": response_text[:800]},
+        }
+
+        await asyncio.sleep(0.05)
+
+    yield {
+        "event":   "swarm_complete",
+        "results": all_results,
+        "final":   all_results.get("CashPostingAgent", {}),
+    }
 
 
 # ── PUBLIC ENTRY POINT ────────────────────────────────────────────────────────

@@ -113,7 +113,7 @@ def register_agents(client: AIProjectClient, registry: dict) -> dict:
 
         print(f"\n[{i}/5] {meta['icon']} {meta['label']}")
         print(f"       Model : {model}")
-        print(f"       Tools : {'CodeInterpreterTool' if tools_obj else 'none'}")
+        print(f"       Tools : {tools_obj[0]['type'] if tools_obj else 'none'}")
 
         # Skip if already registered and not refreshing
         if name in registry and name in existing:
@@ -132,8 +132,7 @@ def register_agents(client: AIProjectClient, registry: dict) -> dict:
             description=f"Cash Application Foundry — {meta['label']}. {meta['desc']}",
         )
         if tools_obj:
-            kwargs["tools"] = tools_obj.definitions
-            kwargs["tool_resources"] = tools_obj.resources
+            kwargs["tools"] = tools_obj  # plain list of dicts e.g. [{"type":"code_interpreter"}]
 
         try:
             agent = client.agents.create_agent(**kwargs)

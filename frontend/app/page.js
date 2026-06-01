@@ -427,7 +427,7 @@ function ExceptionAnalysis({ data }) {
   );
 }
 
-function WorkQueue({ data }) {
+function WorkQueue({ data, wqStatus, onStatusChange }) {
   const items = data?.workqueue_items || data?.work_queue || [];
   if (!items.length) return null;
 
@@ -437,29 +437,41 @@ function WorkQueue({ data }) {
     "AR Team": "#3b82f6", "Deductions Team": "#f59e0b", "Credit Team": "#8b5cf6",
   };
 
+  const approved = items.filter((it) => wqStatus?.[it.txn_id] === "approved").length;
+  const rejected = items.filter((it) => wqStatus?.[it.txn_id] === "rejected").length;
+  const pending  = items.length - approved - rejected;
+
   const criticalItems = items.filter((it) => (it.risk_tier === "CRITICAL" || it.priority === 1));
   const otherItems = items.filter((it) => it.risk_tier !== "CRITICAL" && it.priority !== 1);
 
   return (
     <div>
+      {/* Action summary bar */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 12, alignItems: "center" }}>
+        <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Workqueue Actions:</div>
+        <span style={{ background: "#f0fdf4", color: "#15803d", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 700 }}>✓ {approved} Approved</span>
+        <span style={{ background: "#fef2f2", color: "#dc2626", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 700 }}>✗ {rejected} Rejected</span>
+        <span style={{ background: "#f1f5f9", color: "#64748b", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 700 }}>⏳ {pending} Pending</span>
+      </div>
+
       {criticalItems.length > 0 && (
         <div style={{ background: "#fef2f2", border: "1.5px solid #fca5a5", borderRadius: 10, padding: "10px 14px", marginBottom: 12 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "#dc2626", marginBottom: 8 }}>🔴 CRITICAL — Same-Day Escalation Required</div>
           {criticalItems.map((item, i) => (
-            <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} />
+            <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} status={wqStatus?.[item.txn_id]} onApprove={() => onStatusChange(item.txn_id, "approved")} onReject={() => onStatusChange(item.txn_id, "rejected")} />
           ))}
         </div>
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {otherItems.map((item, i) => (
-          <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} />
+          <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} status={wqStatus?.[item.txn_id]} onApprove={() => onStatusChange(item.txn_id, "approved")} onReject={() => onStatusChange(item.txn_id, "rejected")} />
         ))}
       </div>
     </div>
   );
 }
 
-function WQItem({ item, TEAM_COLOR }) {
+function WQItem({ item, TEAM_COLOR, status, onApprove, onReject }) {
   const team = item.team || item.assigned_team || "AR_ANALYST";
   const teamColor = TEAM_COLOR[team] || "#64748b";
   const risk = item.risk_tier || "MEDIUM";
@@ -467,13 +479,20 @@ function WQItem({ item, TEAM_COLOR }) {
   const priColor = risk === "CRITICAL" || priNum === 1 ? "#dc2626" : risk === "HIGH" || priNum === 2 ? "#ef4444" : risk === "MEDIUM" || priNum === 3 ? "#f59e0b" : "#3b82f6";
   const dueLabel = item.due_by || (priNum === 1 ? "Same Day" : priNum === 2 ? "24 Hours" : priNum === 3 ? "3 Days" : "5 Days");
 
+  const isApproved = status === "approved";
+  const isRejected = status === "rejected";
+  const bgColor = isApproved ? "#f0fdf4" : isRejected ? "#fef2f2" : "#fff";
+  const borderColor = isApproved ? "#bbf7d0" : isRejected ? "#fecaca" : `${priColor}22`;
+
   return (
-    <div style={{ background: "#fff", border: `1px solid ${priColor}22`, borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "flex-start", gap: 12 }}>
+    <div style={{ background: bgColor, border: `1px solid ${borderColor}`, borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "flex-start", gap: 12, transition: "all 0.2s" }}>
       <div style={{ background: priColor + "15", color: priColor, borderRadius: 6, padding: "4px 8px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", minWidth: 28, textAlign: "center" }}>
         {risk || `P${priNum}`}
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b" }}>{item.description || item.action_required || item.task}</div>
+        <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b", textDecoration: isRejected ? "line-through" : "none", opacity: isRejected ? 0.6 : 1 }}>
+          {item.description || item.action_required || item.task}
+        </div>
         <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
           {item.txn_id && <span style={{ fontFamily: "monospace", color: "#3b82f6" }}>{item.txn_id} · </span>}
           {item.erp_action || item.action || ""}
@@ -481,6 +500,35 @@ function WQItem({ item, TEAM_COLOR }) {
         {item.escalation_note && (
           <div style={{ fontSize: 10, color: "#92400e", background: "#fef3c7", borderRadius: 4, padding: "2px 6px", marginTop: 4, display: "inline-block" }}>
             ⚠ {item.escalation_note}
+          </div>
+        )}
+        {/* Action buttons */}
+        {!isApproved && !isRejected && (
+          <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+            <button
+              onClick={onApprove}
+              style={{ background: "#16a34a", color: "#fff", border: "none", borderRadius: 6, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+            >
+              ✓ Approve
+            </button>
+            <button
+              onClick={onReject}
+              style={{ background: "#fff", color: "#dc2626", border: "1px solid #fca5a5", borderRadius: 6, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+            >
+              ✗ Reject
+            </button>
+          </div>
+        )}
+        {isApproved && (
+          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ background: "#dcfce7", color: "#15803d", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 700 }}>✓ Approved</span>
+            <button onClick={() => onReject()} style={{ fontSize: 10, color: "#94a3b8", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>undo</button>
+          </div>
+        )}
+        {isRejected && (
+          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ background: "#fee2e2", color: "#dc2626", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 700 }}>✗ Rejected</span>
+            <button onClick={() => onApprove()} style={{ fontSize: 10, color: "#94a3b8", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>undo</button>
           </div>
         )}
       </div>
@@ -593,7 +641,7 @@ function AgentOutputSection({ agentKey, agentResults, bankData }) {
         )}
         {agentKey === "CashPostingAgent" && (
           <>
-            <WorkQueue data={result} />
+            <WorkQueue data={result} wqStatus={wqStatus} onStatusChange={handleWqAction} />
             <div style={{ marginTop: 20 }}>
               <div style={{ fontWeight: 600, color: "#1e293b", marginBottom: 10, fontSize: 13 }}>GL Posting Journal</div>
               <PostingInstructions data={result} />
@@ -726,6 +774,11 @@ export default function Home() {
   const [finalResult, setFinalResult] = useState(null);
   const [activeTab, setActiveTab] = useState("pipeline");
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [wqStatus, setWqStatus] = useState({});
+
+  function handleWqAction(txn_id, action) {
+    setWqStatus((prev) => ({ ...prev, [txn_id]: action }));
+  }
 
   const addLog = (text, color) =>
     setLogLines((prev) => [...prev, { text: `${new Date().toLocaleTimeString()} — ${text}`, color }]);
@@ -899,7 +952,7 @@ export default function Home() {
               )}
               {dataLoaded && !loading && (
                 <button
-                  onClick={() => { setAgentStates({}); setAgentResults({}); setLogLines([]); setFinalResult(null); setActiveTab("pipeline"); }}
+                  onClick={() => { setAgentStates({}); setAgentResults({}); setLogLines([]); setFinalResult(null); setWqStatus({}); setActiveTab("pipeline"); }}
                   style={{ background: "transparent", color: "#c7d2fe", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 8, padding: "11px 20px", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
                 >
                   Reset
@@ -1023,7 +1076,7 @@ export default function Home() {
                     <>
                       {finalResult && <CashAppSummaryBanner data={finalResult} />}
                       <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 13, marginBottom: 10 }}>Workqueue Items</div>
-                      <WorkQueue data={agentResults["CashPostingAgent"]} />
+                      <WorkQueue data={agentResults["CashPostingAgent"]} wqStatus={wqStatus} onStatusChange={handleWqAction} />
                       <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 13, marginTop: 20, marginBottom: 10 }}>GL Journal Entries</div>
                       <PostingInstructions data={agentResults["CashPostingAgent"]} />
                     </>
