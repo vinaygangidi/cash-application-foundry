@@ -62,6 +62,7 @@ app.add_middleware(
 )
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
+SAMPLES_DIR = FIXTURES_DIR / "samples"
 
 
 class AnalyzeRequest(BaseModel):
@@ -69,24 +70,51 @@ class AnalyzeRequest(BaseModel):
     ar_data: dict
 
 
+def _load_sample(sample_id: str) -> tuple[dict, dict]:
+    """Load bank_statement.json and open_ar.json for the given sample_id (e.g. '01')."""
+    sample_dir = SAMPLES_DIR / f"sample_{sample_id.zfill(2)}"
+    if sample_dir.exists():
+        bank = json.loads((sample_dir / "bank_statement.json").read_text())
+        ar = json.loads((sample_dir / "open_ar.json").read_text())
+        return bank, ar
+    # Fallback to legacy fixture files
+    bank = json.loads((FIXTURES_DIR / "bank_statement.json").read_text())
+    ar = json.loads((FIXTURES_DIR / "open_ar.json").read_text())
+    return bank, ar
+
+
 @app.get("/health")
 async def health():
     storage_configured = _blob_service is not None
     telemetry_configured = bool(_conn_str)
+    sample_count = len(list(SAMPLES_DIR.glob("sample_*"))) if SAMPLES_DIR.exists() else 0
     return {
         "status": "ok",
         "service": "cash-application-foundry",
         "azure_blob_storage": storage_configured,
         "azure_app_insights": telemetry_configured,
         "use_fixtures": os.getenv("USE_FIXTURES", "true"),
+        "sample_count": sample_count,
     }
 
 
+@app.get("/samples")
+async def list_samples():
+    """Return the list of available sample datasets."""
+    samples = []
+    if SAMPLES_DIR.exists():
+        for d in sorted(SAMPLES_DIR.glob("sample_*")):
+            meta_file = d / "meta.json"
+            if meta_file.exists():
+                meta = json.loads(meta_file.read_text())
+                samples.append(meta)
+    return {"samples": samples}
+
+
 @app.get("/demo-data")
-async def demo_data():
-    bank_statement = json.loads((FIXTURES_DIR / "bank_statement.json").read_text())
-    open_ar = json.loads((FIXTURES_DIR / "open_ar.json").read_text())
-    return {"bank_statement": bank_statement, "open_ar": open_ar}
+async def demo_data(sample: str = "01"):
+    bank_statement, open_ar = _load_sample(sample)
+    return {"bank_statement": bank_statement, "open_ar": open_ar, "sample_id": sample}
 
 
 @app.post("/analyze")
