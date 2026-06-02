@@ -775,6 +775,12 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("pipeline");
   const [dataLoaded, setDataLoaded] = useState(false);
   const [wqStatus, setWqStatus] = useState({});
+  const [selectedSample, setSelectedSample] = useState("01");
+  const [sampleList, setSampleList] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/samples").then(r => r.json()).then(d => setSampleList(d.samples || [])).catch(() => {});
+  }, []);
 
   function handleWqAction(txn_id, action) {
     setWqStatus((prev) => ({ ...prev, [txn_id]: action }));
@@ -783,13 +789,16 @@ export default function Home() {
   const addLog = (text, color) =>
     setLogLines((prev) => [...prev, { text: `${new Date().toLocaleTimeString()} - ${text}`, color }]);
 
-  async function loadDemoData() {
-    const res = await fetch("/api/demo-data");
+  async function loadDemoData(sampleId) {
+    const id = sampleId || selectedSample;
+    const res = await fetch(`/api/demo-data?sample=${id}`);
     const d = await res.json();
     setBankData(d.bank_statement);
     setArData(d.open_ar);
     setDataLoaded(true);
-    addLog(`Demo data loaded - ${d.bank_statement?.transactions?.length || 35} bank transactions, ${d.open_ar?.invoices?.length || 38} AR invoices`, "#4ade80");
+    const meta = sampleList.find(s => s.sample_id === id);
+    const label = meta ? meta.label : `Sample ${id}`;
+    addLog(`Loaded: ${label} - ${d.bank_statement?.transactions?.length} transactions, ${d.open_ar?.invoices?.length} invoices`, "#4ade80");
   }
 
   async function runAnalysis() {
@@ -931,33 +940,70 @@ export default function Home() {
             <p style={{ fontSize: 16, color: "#c7d2fe", maxWidth: 600, margin: "0 auto" }}>
               5 specialized AI agents reconcile bank payments to open invoices - handling every edge case from early-pay discounts to FX settlements to NSF returns.
             </p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24 }}>
-              {!dataLoaded ? (
-                <button onClick={loadDemoData} style={{ background: "#fff", color: "#1e3a8a", border: "none", borderRadius: 8, padding: "11px 28px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
-                  Load Demo Data
-                </button>
-              ) : (
-                <button
-                  onClick={runAnalysis}
-                  disabled={loading}
-                  style={{
-                    background: loading ? "rgba(255,255,255,0.3)" : "#fff",
-                    color: loading ? "#fff" : "#1e3a8a",
-                    border: "none", borderRadius: 8, padding: "11px 28px",
-                    fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer",
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginTop: 24 }}>
+              {/* Sample picker */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.1)", borderRadius: 10, padding: "8px 14px" }}>
+                <span style={{ fontSize: 12, color: "#c7d2fe", fontWeight: 600, whiteSpace: "nowrap" }}>Dataset:</span>
+                <select
+                  value={selectedSample}
+                  onChange={e => {
+                    setSelectedSample(e.target.value);
+                    if (dataLoaded) {
+                      setAgentStates({}); setAgentResults({}); setLogLines([]); setFinalResult(null); setWqStatus({}); setActiveTab("pipeline");
+                      loadDemoData(e.target.value);
+                    }
                   }}
+                  style={{ background: "rgba(255,255,255,0.95)", color: "#1e3a8a", border: "none", borderRadius: 6, padding: "6px 10px", fontWeight: 600, fontSize: 12, cursor: "pointer", maxWidth: 320 }}
                 >
-                  {loading ? "⏳ Agents Running..." : "▶ Run Cash Application"}
-                </button>
-              )}
-              {dataLoaded && !loading && (
-                <button
-                  onClick={() => { setAgentStates({}); setAgentResults({}); setLogLines([]); setFinalResult(null); setWqStatus({}); setActiveTab("pipeline"); }}
-                  style={{ background: "transparent", color: "#c7d2fe", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 8, padding: "11px 20px", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
-                >
-                  Reset
-                </button>
-              )}
+                  {sampleList.length > 0 ? sampleList.map(s => (
+                    <option key={s.sample_id} value={s.sample_id}>
+                      {s.sample_id}. {s.label} ({s.transactions} txns)
+                    </option>
+                  )) : (
+                    <>
+                      <option value="01">01. Clean Batch - Exact and Near-Exact Matches</option>
+                      <option value="02">02. Deductions Heavy - Freight, Damage, Unauthorized</option>
+                      <option value="03">03. Compliance and Legal Risk</option>
+                      <option value="04">04. Multi-Entity - Parent/Subsidiary, Factoring</option>
+                      <option value="05">05. International FX - EUR, GBP, CAD Payments</option>
+                      <option value="06">06. Timing Issues - Post-Dated, Stale, NSF</option>
+                      <option value="07">07. Remittance Problems - Missing, Vague, EDI</option>
+                      <option value="08">08. Overpayments and Credit Memos</option>
+                      <option value="09">09. Identity and Name Issues - SWIFT, DBA, Alias</option>
+                      <option value="10">10. Enterprise Mixed Batch - All Exception Types</option>
+                    </>
+                  )}
+                </select>
+              </div>
+              {/* Action buttons */}
+              <div style={{ display: "flex", gap: 12 }}>
+                {!dataLoaded ? (
+                  <button onClick={() => loadDemoData()} style={{ background: "#fff", color: "#1e3a8a", border: "none", borderRadius: 8, padding: "11px 28px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+                    Load Dataset
+                  </button>
+                ) : (
+                  <button
+                    onClick={runAnalysis}
+                    disabled={loading}
+                    style={{
+                      background: loading ? "rgba(255,255,255,0.3)" : "#fff",
+                      color: loading ? "#fff" : "#1e3a8a",
+                      border: "none", borderRadius: 8, padding: "11px 28px",
+                      fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    {loading ? "⏳ Agents Running..." : "▶ Run Cash Application"}
+                  </button>
+                )}
+                {dataLoaded && !loading && (
+                  <button
+                    onClick={() => { setAgentStates({}); setAgentResults({}); setLogLines([]); setFinalResult(null); setWqStatus({}); setActiveTab("pipeline"); setDataLoaded(false); }}
+                    style={{ background: "transparent", color: "#c7d2fe", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 8, padding: "11px 20px", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
