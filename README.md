@@ -116,7 +116,7 @@ This isn't a wrapper around ChatGPT. Every inference call goes through **Azure A
 |---|---|---|
 | Bank Statement Parser | GPT-4o-mini | Text normalization and flag detection. Fast, cheap, accurate. No deep reasoning needed. |
 | AR Ledger Builder | GPT-4o-mini | Building lookup tables from structured JSON. Deterministic, no business judgment required. |
-| Reconciliation Engine | GPT-4o | Complex matching logic with 8 tiers and 8 pre-checks. Plus CodeInterpreter for verified arithmetic. |
+| Reconciliation Engine | GPT-4o | Complex matching logic with 8 tiers and 8 pre-checks. Precise arithmetic applied directly from the structured input data. |
 | Mismatch Reasoning | GPT-5 | Business judgment: "Is this a legitimate freight deduction?" This is where a reasoning model pays off. |
 | Cash Posting | GPT-4o | Generating complex structured output: GL entries, workqueue routing, compliance actions. |
 

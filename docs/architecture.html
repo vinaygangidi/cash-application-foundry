@@ -184,7 +184,7 @@
     <div class="header-badges">
       <span class="badge">Azure AI Foundry Agent Service</span>
       <span class="badge">Azure OpenAI, GPT-4o · GPT-4o-mini · o3-mini</span>
-      <span class="badge">CodeInterpreterTool</span>
+      <span class="badge">GPT-4o</span>
       <span class="badge">ConnectedAgentTool</span>
       <span class="badge">FastAPI SSE Streaming</span>
       <span class="badge">Next.js · Vercel</span>
@@ -285,7 +285,7 @@
           <div class="agent-icon">⚖️</div>
           <div class="agent-name">Reconciliation Engine</div>
           <div class="model-badge pill-full">GPT-4o</div>
-          <div class="model-type">🐍 + CodeInterpreter</div>
+          <div class="model-type">GPT-4o</div>
         </div>
 
         <div class="agent-card red">
@@ -328,7 +328,7 @@
         <div class="tool-card">
           <div class="tool-icon">🐍</div>
           <div>
-            <div class="tool-name">CodeInterpreterTool</div>
+            <div class="tool-name">GPT-4o</div>
             <div class="tool-desc">ReconciliationAgent writes & executes Python in Azure's sandboxed environment. Used for exact multi-invoice arithmetic, 2% discount calculations, FX rate verification, no floating point errors.</div>
           </div>
         </div>
@@ -459,7 +459,7 @@
         <tr>
           <td><strong>⚖️ ReconciliationAgent</strong></td>
           <td><span class="model-pill pill-full">GPT-4o</span></td>
-          <td>Needs CodeInterpreterTool for exact arithmetic. Complex 8-tier matching logic with pre-checks.</td>
+          <td>Needs GPT-4o for exact arithmetic. Complex 8-tier matching logic with pre-checks.</td>
           <td>Run Python for multi-invoice sums, FX math, discount calc</td>
           <td><span class="cost-dot cost-med"></span>Medium</td>
         </tr>
@@ -558,7 +558,7 @@
           <span class="edge-card-count" style="background:#e0f2fe; color:#0369a1;">2 cases</span>
         </div>
         <div class="edge-tags">
-          <span class="edge-tag">EUR SWIFT payment + FX conversion</span><span class="edge-tag">FX rate verification via CodeInterpreter Python</span>
+          <span class="edge-tag">EUR SWIFT payment + FX conversion</span><span class="edge-tag">FX rate verification</span>
         </div>
       </div>
 
@@ -611,7 +611,7 @@
       <div style="border: 1.5px solid #f59e0b33; border-radius: 12px; overflow: hidden;">
         <div style="background: #fffbeb; padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #fde68a;">
           <span style="font-size: 20px;">⚖️</span>
-          <div style="flex:1;"><div style="font-weight: 700; color: #92400e; font-size: 14px;">Agent 3, ReconciliationAgent</div><span style="background:#fef3c7; color:#92400e; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o + CodeInterpreterTool</span></div>
+          <div style="flex:1;"><div style="font-weight: 700; color: #92400e; font-size: 14px;">Agent 3, ReconciliationAgent</div><span style="background:#fef3c7; color:#92400e; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o + GPT-4o</span></div>
         </div>
         <div style="padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 12px;">
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Normalized payments (Agent 1) + AR customer index (Agent 2) from shared thread. Runs 8 pre-checks before matching.</div></div>
@@ -647,195 +647,10 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════ CODE INTERPRETER -->
-  <div class="section">
-    <div class="section-tag">Section 06</div>
-    <div class="section-title">How Code Interpreter Works Here vs Using the Foundry UI</div>
-    <div class="section-sub">Code Interpreter is not just a chat feature. In this pipeline it is the difference between a model that guesses arithmetic and one that actually runs Python and reads the result. This section explains what it does, why it matters for cash application, and how it differs from typing a prompt in the Azure AI Foundry playground.</div>
-
-    <!-- Side by side: UI prompt vs Code Interpreter -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
-
-      <div style="border:2px solid #f59e0b; border-radius:14px; overflow:hidden;">
-        <div style="background:#fffbeb; padding:12px 18px; border-bottom:1px solid #fde68a;">
-          <div style="font-size:12px; font-weight:800; color:#92400e;">When you type a prompt in the Foundry UI playground</div>
-          <div style="font-size:10px; color:#b45309; margin-top:3px;">No Code Interpreter attached</div>
-        </div>
-        <div style="padding:16px 18px;">
-          <div style="background:#f1f5f9; border-radius:8px; padding:12px; font-size:11px; color:#374151; margin-bottom:12px; font-style:italic;">
-            "A customer paid $29,250. They owe invoices for $8,750, $6,500, and $14,000. Does this payment cover all three?"
-          </div>
-          <div style="font-size:11px; color:#374151; line-height:1.7;">
-            The model reads the numbers, does the addition <strong>inside its own token prediction process</strong>, and responds with something like "Yes, 8750 + 6500 + 14000 = 29250, the payment matches."<br/><br/>
-            <strong>The problem:</strong> The model is not calculating. It is predicting the most likely next token based on training data. Large language models are statistically unreliable on arithmetic, especially when multiple numbers are involved or amounts are close. A $29,400 payment against a $29,250 sum could easily be reported as a match.
-          </div>
-          <div style="margin-top:12px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 12px; font-size:11px; color:#991b1b;">
-            Result: The model <strong>guesses</strong>. In finance, a wrong guess means a misposting. You cannot audit a guess.
-          </div>
-        </div>
-      </div>
-
-      <div style="border:2px solid #10b981; border-radius:14px; overflow:hidden;">
-        <div style="background:#f0fdf4; padding:12px 18px; border-bottom:1px solid #bbf7d0;">
-          <div style="font-size:12px; font-weight:800; color:#065f46;">With Code Interpreter attached to the Reconciliation Agent</div>
-          <div style="font-size:10px; color:#059669; margin-top:3px;">Running in this pipeline</div>
-        </div>
-        <div style="padding:16px 18px;">
-          <div style="font-size:11px; color:#374151; line-height:1.7; margin-bottom:12px;">
-            The model does not calculate mentally. Instead, it writes a short Python script and submits it for execution. Azure AI Foundry runs the code in a sandboxed container and returns the printed output. The model reads that output and includes it in its reasoning.
-          </div>
-          <div style="background:#0f172a; border-radius:8px; padding:12px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8; margin-bottom:12px;">
-            <span style="color:#4ade80;"># Model writes this</span><br/>
-            invoices = [8750, 6500, 14000]<br/>
-            payment = 29250<br/>
-            total = sum(invoices)<br/>
-            print(f"Sum: {total}")<br/>
-            print(f"Match: {total == payment}")<br/>
-            <br/>
-            <span style="color:#fbbf24;"># Azure executes it, returns:</span><br/>
-            <span style="color:#93c5fd;">Sum: 29250</span><br/>
-            <span style="color:#93c5fd;">Match: True</span>
-          </div>
-          <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 12px; font-size:11px; color:#065f46;">
-            Result: The model <strong>knows</strong>. The match decision is based on a Python interpreter output, not token prediction. Fully auditable.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- How it works technically -->
-    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:20px 22px; margin-bottom:20px;">
-      <div style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:16px;">How Code Interpreter Actually Works Under the Hood</div>
-      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative;">
-        <div style="text-align:center; padding:0 8px;">
-          <div style="background:#dbeafe; border:1.5px solid #3b82f6; border-radius:10px; padding:12px 8px; margin-bottom:8px;">
-            <div style="font-size:18px; margin-bottom:4px;">🧠</div>
-            <div style="font-size:10px; font-weight:700; color:#1d4ed8;">1. Agent reads the data</div>
-          </div>
-          <div style="font-size:10px; color:#64748b; line-height:1.5;">ReconciliationAgent gets normalized transactions and invoice index from Agents 1 and 2</div>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:20px; padding-bottom:30px;">›</div>
-        <div style="text-align:center; padding:0 8px;">
-          <div style="background:#fef3c7; border:1.5px solid #f59e0b; border-radius:10px; padding:12px 8px; margin-bottom:8px;">
-            <div style="font-size:18px; margin-bottom:4px;">🐍</div>
-            <div style="font-size:10px; font-weight:700; color:#92400e;">2. Agent writes Python</div>
-          </div>
-          <div style="font-size:10px; color:#64748b; line-height:1.5;">Instead of reasoning about the math, the model writes a code block to verify the specific calculation</div>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:20px; padding-bottom:30px;">›</div>
-        <div style="text-align:center; padding:0 8px;">
-          <div style="background:#d1fae5; border:1.5px solid #10b981; border-radius:10px; padding:12px 8px; margin-bottom:8px;">
-            <div style="font-size:18px; margin-bottom:4px;">⚙️</div>
-            <div style="font-size:10px; font-weight:700; color:#065f46;">3. Azure runs it</div>
-          </div>
-          <div style="font-size:10px; color:#64748b; line-height:1.5;">Azure AI Foundry executes the Python in an isolated sandbox. Output is captured and returned to the model</div>
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;">
-        <div style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:20px;">v</div>
-        <div style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:20px;"></div>
-        <div style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:20px;"></div>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:4px;">
-        <div style="text-align:center; padding:0 8px;">
-          <div style="background:#f5f3ff; border:1.5px solid #8b5cf6; border-radius:10px; padding:12px 8px; margin-bottom:8px;">
-            <div style="font-size:18px; margin-bottom:4px;">📋</div>
-            <div style="font-size:10px; font-weight:700; color:#5b21b6;">4. Model reads the output</div>
-          </div>
-          <div style="font-size:10px; color:#64748b; line-height:1.5;">The printed result comes back as a tool response. The model now has a verified True/False or exact number to use in its match decision</div>
-        </div>
-        <div style="text-align:center; padding:0 8px;">
-          <div style="background:#fef2f2; border:1.5px solid #ef4444; border-radius:10px; padding:12px 8px; margin-bottom:8px;">
-            <div style="font-size:18px; margin-bottom:4px;">✔</div>
-            <div style="font-size:10px; font-weight:700; color:#991b1b;">5. Match decision is recorded</div>
-          </div>
-          <div style="font-size:10px; color:#64748b; line-height:1.5;">The match record in the output JSON includes the verified amount. The audit trail can show exactly which Python output drove the decision</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- The 5 things Code Interpreter verifies in this pipeline -->
-    <div style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:14px;">The 5 Calculations Code Interpreter Runs in This Pipeline</div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
-        <div style="font-size:11px; font-weight:700; color:#1e293b; margin-bottom:8px;">Multi-invoice bundle check</div>
-        <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8; margin-bottom:8px;">
-          invoices = [8750.00, 6500.00, 14000.00]<br/>
-          payment = 29250.00<br/>
-          print(sum(invoices) == payment)  <span style="color:#4ade80;"># True</span>
-        </div>
-        <div style="font-size:10px; color:#64748b;">Why it matters: a customer bundling 3 invoices in one wire is one of the most common exception types. Without exact verification, the model might accept a $29,400 payment as matching a $29,250 bundle.</div>
-      </div>
-
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
-        <div style="font-size:11px; font-weight:700; color:#1e293b; margin-bottom:8px;">Early-pay discount validation</div>
-        <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8; margin-bottom:8px;">
-          invoice = 30000.00<br/>
-          discount_pct = 2.0<br/>
-          payment = 29400.00<br/>
-          expected = invoice * (1 - discount_pct/100)<br/>
-          print(round(expected, 2) == payment)  <span style="color:#4ade80;"># True</span>
-        </div>
-        <div style="font-size:10px; color:#64748b;">Why it matters: distinguishes a valid 2% early-pay discount ($600 off $30,000) from an unauthorized short pay. The contractual discount must match exactly.</div>
-      </div>
-
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
-        <div style="font-size:11px; font-weight:700; color:#1e293b; margin-bottom:8px;">FX rate verification</div>
-        <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8; margin-bottom:8px;">
-          eur_amount = 20000.00<br/>
-          fx_rate = 1.125<br/>
-          usd_received = 22500.00<br/>
-          expected_usd = eur_amount * fx_rate<br/>
-          print(abs(expected_usd - usd_received) &lt;= 1.00)  <span style="color:#4ade80;"># True</span>
-        </div>
-        <div style="font-size:10px; color:#64748b;">Why it matters: a SWIFT payment arrives in EUR. The bank converts it to USD. Code Interpreter verifies the conversion was applied at a reasonable rate, flagging FX_RATE_MISMATCH if the delta exceeds $1.</div>
-      </div>
-
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
-        <div style="font-size:11px; font-weight:700; color:#1e293b; margin-bottom:8px;">Stale check age check</div>
-        <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8; margin-bottom:8px;">
-          from datetime import date<br/>
-          check_date = date(2024, 10, 15)<br/>
-          statement_date = date(2025, 5, 20)<br/>
-          age = (statement_date - check_date).days<br/>
-          print(age &gt; 180)  <span style="color:#4ade80;"># True - stale check</span>
-        </div>
-        <div style="font-size:10px; color:#64748b;">Why it matters: a check more than 180 days old cannot legally be negotiated at most banks. Depositing it anyway creates a returned item. Code Interpreter catches this before it becomes a problem.</div>
-      </div>
-
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; grid-column: 1 / -1;">
-        <div style="font-size:11px; font-weight:700; color:#1e293b; margin-bottom:8px;">Intercompany netting verification</div>
-        <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8; margin-bottom:8px;">
-          our_receivable = 150000.00   <span style="color:#4ade80;"># what they owe us</span><br/>
-          our_payable    = 120000.00   <span style="color:#4ade80;"># what we owe them</span><br/>
-          payment_received = 30000.00<br/>
-          expected_net = our_receivable - our_payable<br/>
-          print(expected_net == payment_received)  <span style="color:#4ade80;"># True - valid net settlement</span>
-        </div>
-        <div style="font-size:10px; color:#64748b;">Why it matters: intercompany netting means two related companies settle their mutual AR and AP in a single net payment. Without verifying the math, the model might accept a wrong net amount or misclassify it as a short pay.</div>
-      </div>
-    </div>
-
-    <!-- Key difference summary -->
-    <div style="background:linear-gradient(135deg,#0f172a,#1e3a8a); border-radius:12px; padding:18px 22px; color:#fff;">
-      <div style="font-size:12px; font-weight:700; color:#93c5fd; letter-spacing:1px; margin-bottom:12px; text-transform:uppercase;">The Core Difference in Plain Terms</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-        <div>
-          <div style="font-size:11px; font-weight:700; color:#fca5a5; margin-bottom:6px;">Foundry UI playground (no Code Interpreter)</div>
-          <div style="font-size:11px; color:#e0e7ff; line-height:1.7;">You paste your data, the model reads it and produces an answer. All arithmetic happens inside the transformer's forward pass. It is the same process that predicts the next word in a sentence. It is fast and often correct, but it cannot be verified and it fails on edge cases with large or similar-looking numbers. Good for exploration. Not acceptable for posting GL entries.</div>
-        </div>
-        <div>
-          <div style="font-size:11px; font-weight:700; color:#86efac; margin-bottom:6px;">This pipeline with Code Interpreter on ReconciliationAgent</div>
-          <div style="font-size:11px; color:#e0e7ff; line-height:1.7;">The model decides what to calculate and writes the code, but a Python interpreter does the actual math. The model never computes a sum, it only reads a printed result. This is a clean separation between reasoning (what to check) and computation (the actual check). Every match decision has a verifiable code execution behind it, not a token prediction.</div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ═══════════════════════════════════════════ LIVE AZURE SERVICES -->
   <div class="section">
-    <div class="section-tag">Section 07: Live Today</div>
+    <div class="section-tag">Section 06: Live Today</div>
     <div class="section-title">Azure Services Running in the MVP Right Now</div>
     <div class="section-sub">Azure Blob Storage and Azure Application Insights are not future state, they are wired up and running in every live batch today. Here is exactly what each service does and what data flows through it.</div>
 

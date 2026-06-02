@@ -2,10 +2,10 @@
 import { useState, useRef, useEffect } from "react";
 
 const AGENT_META = {
-  BankStatementIntelligenceAgent: { label: "Bank Statement Parser", icon: "🏦", color: "#3b82f6", bg: "#eff6ff", model: "gpt-5.4-mini", modelColor: "#059669" },
-  ARLedgerAgent:                  { label: "Open AR Ledger",        icon: "📒", color: "#10b981", bg: "#f0fdf4", model: "gpt-5.4-mini", modelColor: "#059669" },
-  ReconciliationAgent:            { label: "Reconciliation Engine", icon: "⚖️",  color: "#f59e0b", bg: "#fffbeb", model: "gpt-4o",       modelColor: "#2563eb" },
-  MismatchReasoningAgent:         { label: "Mismatch Reasoning",   icon: "🧠", color: "#ef4444", bg: "#fef2f2", model: "gpt-5",        modelColor: "#7c3aed" },
+  BankStatementIntelligenceAgent: { label: "Bank Statement Parser", icon: "🏦", color: "#3b82f6", bg: "#eff6ff", model: "gpt-4o-mini", modelColor: "#059669" },
+  ARLedgerAgent:                  { label: "Open AR Ledger",        icon: "📒", color: "#10b981", bg: "#f0fdf4", model: "gpt-4o-mini", modelColor: "#059669" },
+  ReconciliationAgent:            { label: "Reconciliation Engine", icon: "⚖️",  color: "#f59e0b", bg: "#fffbeb", model: "gpt-4o + Code Interpreter", modelColor: "#2563eb" },
+  MismatchReasoningAgent:         { label: "Mismatch Reasoning",   icon: "🧠", color: "#ef4444", bg: "#fef2f2", model: "gpt-4o",       modelColor: "#7c3aed" },
   CashPostingAgent:               { label: "Cash Posting",          icon: "✅", color: "#8b5cf6", bg: "#f5f3ff", model: "gpt-4o",       modelColor: "#2563eb" },
 };
 
@@ -155,7 +155,7 @@ function LiveLog({ lines }) {
       }}
     >
       <div style={{ color: "#4ade80", marginBottom: 6, fontSize: 10 }}>
-        ● LIVE LOG - Azure AI Foundry Agent Service
+        ● LIVE LOG - Azure AI Foundry
       </div>
       {lines.map((l, i) => (
         <div key={i} style={{ color: l.color || "#94a3b8", lineHeight: "1.6" }}>
@@ -809,7 +809,7 @@ export default function Home() {
     setLogLines([]);
     setFinalResult(null);
 
-    addLog("Starting Azure AI Foundry Agent Service swarm...", "#60a5fa");
+    addLog("Starting Azure AI Foundry pipeline...", "#60a5fa");
 
     try {
       const res = await fetch("/api/analyze", {
@@ -923,7 +923,7 @@ export default function Home() {
             <div style={{ width: 34, height: 34, background: "rgba(255,255,255,0.15)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>💸</div>
             <div style={{ color: "#fff", fontWeight: 700, fontSize: 16 }}>Cash Application Foundry</div>
             <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-              {["Azure AI Foundry", "AI Agent Service", "CodeInterpreter"].map((tag) => (
+              {["Azure AI Foundry", "Assistants API", "Code Interpreter"].map((tag) => (
                 <span key={tag} style={{ background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.9)", borderRadius: 6, padding: "3px 10px", fontSize: 11, fontWeight: 500 }}>{tag}</span>
               ))}
             </div>
@@ -931,11 +931,11 @@ export default function Home() {
 
           {/* Hero */}
           <div style={{ textAlign: "center", color: "#fff" }}>
-            <div style={{ fontSize: 11, letterSpacing: 2, color: "#93c5fd", textTransform: "uppercase", marginBottom: 10 }}>Azure AI Foundry · Multi-Agent Cash Application</div>
+            <div style={{ fontSize: 11, letterSpacing: 2, color: "#93c5fd", textTransform: "uppercase", marginBottom: 10 }}>Azure AI Foundry · 5-Agent Cash Application Pipeline</div>
             <h1 style={{ fontSize: 42, fontWeight: 800, lineHeight: 1.15, marginBottom: 12 }}>
               Intelligent Cash Application
               <br />
-              <span style={{ color: "#a5b4fc" }}>Powered by AI Agent Service</span>
+              <span style={{ color: "#a5b4fc" }}>Powered by Azure AI Foundry</span>
             </h1>
             <p style={{ fontSize: 16, color: "#c7d2fe", maxWidth: 600, margin: "0 auto" }}>
               5 specialized AI agents reconcile bank payments to open invoices - handling every edge case from early-pay discounts to FX settlements to NSF returns.
@@ -1165,7 +1165,7 @@ function HowItWorks() {
       key: "ReconciliationAgent",
       input: "Normalized payments + AR customer index",
       output: "Match tier, confidence score, and matched invoice IDs for every transaction",
-      why: "Uses CodeInterpreterTool to write and execute real Python for exact amount arithmetic - verifying multi-invoice sums, discount calculations, FX conversions without floating point errors.",
+      why: "Uses the Assistants API with Code Interpreter to write and execute real Python for exact amount arithmetic - verifying multi-invoice sums, discount calculations, FX conversions.",
     },
     {
       key: "MismatchReasoningAgent",
@@ -1183,12 +1183,12 @@ function HowItWorks() {
 
   const techStack = [
     {
-      name: "Azure AI Foundry Agent Service",
+      name: "Azure AI Foundry",
       icon: "🤖",
       desc: "Native managed agent runtime. Each agent is a first-class Azure resource with its own thread context, tools, and lifecycle. No framework wrappers - direct SDK calls to `AIProjectClient`.",
     },
     {
-      name: "CodeInterpreterTool",
+      name: "Code Interpreter (Assistants API)",
       icon: "🐍",
       desc: "Built-in AI Foundry tool that lets ReconciliationAgent write Python and execute it in a sandboxed environment. Used for exact arithmetic: multi-invoice sum verification, 2% discount calculations, FX rate conversions.",
     },

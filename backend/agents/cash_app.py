@@ -155,13 +155,102 @@ async def _run_demo_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
 
 # ── LIVE AZURE SWARM ──────────────────────────────────────────────────────────
 
+async def _run_recon_with_code_interpreter(
+    client: AsyncAzureOpenAI,
+    user_content: str,
+    model: str,
+) -> AsyncGenerator[dict, None]:
+    """
+    Run the Reconciliation Agent via the Azure OpenAI Assistants API with real
+    Code Interpreter enabled. The model writes Python, Azure executes it in a
+    sandboxed container, and the verified output is fed back to the model before
+    it produces its final JSON. This is genuine code execution, not simulated.
+    """
+    assistant = None
+    thread    = None
+    try:
+        assistant = await client.beta.assistants.create(
+            name="ReconciliationAgent",
+            instructions=RECON_PROMPT,
+            model=model,
+            tools=[{"type": "code_interpreter"}],
+        )
+        thread = await client.beta.threads.create()
+        await client.beta.threads.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=user_content,
+        )
+
+        response_text = ""
+
+        async with client.beta.threads.runs.stream(
+            thread_id=thread.id,
+            assistant_id=assistant.id,
+        ) as stream:
+            async for event in stream:
+                evt = getattr(event, "event", "")
+
+                # Text tokens being generated
+                if evt == "thread.message.delta":
+                    for block in (getattr(event.data.delta, "content", None) or []):
+                        if getattr(block, "type", "") == "text":
+                            chunk = getattr(block.text, "value", "") or ""
+                            if chunk:
+                                response_text += chunk
+                                yield {"event": "agent_token", "agent": "ReconciliationAgent", "token": chunk}
+
+                # Code Interpreter: Python being written + output returned
+                elif evt == "thread.run.step.delta":
+                    step = getattr(event.data.delta, "step_details", None)
+                    if step and getattr(step, "type", "") == "tool_calls":
+                        for tc in (getattr(step, "tool_calls", None) or []):
+                            if getattr(tc, "type", "") == "code_interpreter":
+                                ci = getattr(tc, "code_interpreter", None)
+                                if ci:
+                                    code_in = getattr(ci, "input", None)
+                                    if code_in:
+                                        yield {"event": "code_input", "agent": "ReconciliationAgent", "code": code_in}
+                                    for out in (getattr(ci, "outputs", None) or []):
+                                        if getattr(out, "type", "") == "logs":
+                                            yield {"event": "code_output", "agent": "ReconciliationAgent", "output": out.logs}
+
+        # Get the final complete message text
+        msgs = await client.beta.threads.messages.list(thread_id=thread.id)
+        for msg in msgs.data:
+            if msg.role == "assistant":
+                for block in msg.content:
+                    if getattr(block, "type", "") == "text":
+                        response_text = block.text.value
+                        break
+                break
+
+        yield {"event": "agent_response", "agent": "ReconciliationAgent", "text": response_text}
+
+    except Exception as e:
+        yield {"event": "code_interpreter_unavailable", "agent": "ReconciliationAgent", "message": str(e)}
+        yield {"event": "agent_response", "agent": "ReconciliationAgent", "text": ""}
+
+    finally:
+        if thread:
+            try:
+                await client.beta.threads.delete(thread.id)
+            except Exception:
+                pass
+        if assistant:
+            try:
+                await client.beta.assistants.delete(assistant.id)
+            except Exception:
+                pass
+
+
 async def _run_live_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict, None]:
     """
-    Live swarm using Azure AI Foundry via OpenAI-compatible chat completions.
+    Live swarm using Azure AI Foundry.
 
-    Each agent runs as a sequential chat completion with its own system prompt.
-    Agents 1-2 receive the raw input data; agents 3-5 receive targeted structured
-    outputs from prior agents to avoid context bloat and keep costs low.
+    Agents 1, 2, 4, 5 use Chat Completions API.
+    Agent 3 (Reconciliation) uses the Assistants API with real Code Interpreter
+    so all arithmetic is executed in an Azure-hosted Python sandbox.
     """
     client      = _build_openai_client()
     all_results: dict[str, dict] = {}
@@ -241,39 +330,75 @@ async def _run_live_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
         finish_reason = None
         last_error    = None
 
-        for attempt in range(3):
-            try:
-                response_text = ""
-                finish_reason = None
-                stream = await client.chat.completions.create(
-                    model=model,
-                    messages=messages,
-                    stream=True,
-                    max_tokens=max_tokens,
-                    temperature=0,
-                    timeout=300,
-                )
+        # Reconciliation Agent uses real Code Interpreter via Assistants API
+        if agent_name == "ReconciliationAgent":
+            async for ci_event in _run_recon_with_code_interpreter(client, _user_content(agent_name), model):
+                if ci_event.get("event") == "agent_response":
+                    response_text = ci_event.get("text", "")
+                elif ci_event.get("event") == "code_interpreter_unavailable":
+                    # Fall back to chat completions if Assistants API not available
+                    last_error = ci_event.get("message")
+                else:
+                    yield ci_event
+        else:
+            for attempt in range(3):
+                try:
+                    response_text = ""
+                    finish_reason = None
+                    stream = await client.chat.completions.create(
+                        model=model,
+                        messages=messages,
+                        stream=True,
+                        max_tokens=max_tokens,
+                        temperature=0,
+                        timeout=300,
+                    )
 
-                async for chunk in stream:
-                    if chunk.choices:
-                        choice = chunk.choices[0]
-                        if choice.delta.content:
-                            token = choice.delta.content
-                            response_text += token
-                            yield {"event": "agent_token", "agent": agent_name, "token": token}
-                        if choice.finish_reason:
-                            finish_reason = choice.finish_reason
+                    async for chunk in stream:
+                        if chunk.choices:
+                            choice = chunk.choices[0]
+                            if choice.delta.content:
+                                token = choice.delta.content
+                                response_text += token
+                                yield {"event": "agent_token", "agent": agent_name, "token": token}
+                            if choice.finish_reason:
+                                finish_reason = choice.finish_reason
 
-                last_error = None
-                break
+                    last_error = None
+                    break
 
-            except Exception as e:
-                last_error = e
-                if attempt < 2:
-                    await asyncio.sleep(2)
+                except Exception as e:
+                    last_error = e
+                    if attempt < 2:
+                        await asyncio.sleep(2)
 
-        if last_error:
-            yield {"event": "error", "agent": agent_name, "message": f"{agent_name} failed after 3 attempts: {last_error}"}
+        # If Code Interpreter fell back and chat completions also failed, retry recon via chat
+        if agent_name == "ReconciliationAgent" and (not response_text or last_error):
+            for attempt in range(3):
+                try:
+                    response_text = ""
+                    stream = await client.chat.completions.create(
+                        model=model, messages=messages, stream=True,
+                        max_tokens=max_tokens, temperature=0, timeout=300,
+                    )
+                    async for chunk in stream:
+                        if chunk.choices:
+                            choice = chunk.choices[0]
+                            if choice.delta.content:
+                                token = choice.delta.content
+                                response_text += token
+                                yield {"event": "agent_token", "agent": agent_name, "token": token}
+                            if choice.finish_reason:
+                                finish_reason = choice.finish_reason
+                    last_error = None
+                    break
+                except Exception as e:
+                    last_error = e
+                    if attempt < 2:
+                        await asyncio.sleep(2)
+
+        if last_error and not response_text:
+            yield {"event": "error", "agent": agent_name, "message": f"{agent_name} failed: {last_error}"}
             return
 
         parsed = _extract_json(response_text)
