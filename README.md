@@ -4,7 +4,7 @@ A team of 5 AI agents that takes your bank statement and open invoices, figures 
 
 > Built for Microsoft Build AI Hackathon 2026 · Theme 05: Agent Swarms
 
-**Live Demo:** [cash-application-foundry.vercel.app](https://cash-application-foundry.vercel.app) · **Architecture Docs:** [vinaygangidi.github.io/cash-application-foundry](https://vinaygangidi.github.io/cash-application-foundry)
+**Live Demo:** [cash-application-foundry.vercel.app](https://cash-application-foundry.vercel.app) · **Architecture Docs:** [vinaygangidi.github.io/cash-application-foundry/architecture.html](https://vinaygangidi.github.io/cash-application-foundry/architecture.html)
 
 
 ## What problem does this solve?
