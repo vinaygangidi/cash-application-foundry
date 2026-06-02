@@ -250,7 +250,7 @@ async def _run_live_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
                     messages=messages,
                     stream=True,
                     max_tokens=max_tokens,
-                    temperature=0.1,
+                    temperature=0,
                     timeout=300,
                 )
 
