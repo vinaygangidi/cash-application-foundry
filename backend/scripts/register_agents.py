@@ -1,5 +1,5 @@
 """
-register_agents.py — Create all 5 Cash Application agents in Azure AI Foundry.
+register_agents.py - Create all 5 Cash Application agents in Azure AI Foundry.
 
 Run once to make agents visible in ai.azure.com → your project → Agents.
 Agent IDs are saved to agents_registry.json and reused on subsequent runs.
@@ -129,7 +129,7 @@ def register_agents(client: AIProjectClient, registry: dict) -> dict:
             model=model,
             name=name,
             instructions=AGENT_PROMPTS[name],
-            description=f"Cash Application Foundry — {meta['label']}. {meta['desc']}",
+            description=f"Cash Application Foundry - {meta['label']}. {meta['desc']}",
         )
         if tools_obj:
             kwargs["tools"] = tools_obj  # plain list of dicts e.g. [{"type":"code_interpreter"}]
@@ -139,7 +139,7 @@ def register_agents(client: AIProjectClient, registry: dict) -> dict:
             updated_registry[name] = agent.id
             print(f"       Status: ✓ Created (ID: {agent.id})")
         except Exception as e:
-            print(f"       Status: ✗ FAILED — {e}")
+            print(f"       Status: ✗ FAILED - {e}")
             sys.exit(1)
 
     return updated_registry
@@ -147,7 +147,7 @@ def register_agents(client: AIProjectClient, registry: dict) -> dict:
 
 def print_summary(registry: dict):
     print("\n" + "─" * 60)
-    print("  CASH APPLICATION FOUNDRY — Agents Registered")
+    print("  CASH APPLICATION FOUNDRY - Agents Registered")
     print("─" * 60)
     for i, name in enumerate(AGENT_ORDER, 1):
         meta  = AGENT_META[name]

@@ -24,7 +24,7 @@
       "payer_raw": "PINNACLE INDUSTRIES LLC",
       "bank_reference": "WIRE20240605001",
       "remittance_text": "INV-2024-0118 INV-2024-0121",
-      "note": "EDGE: Multi-invoice — two invoices consolidated"
+      "note": "EDGE: Multi-invoice - two invoices consolidated"
     },
     {
       "txn_id": "TXN-2024-003",
@@ -35,7 +35,7 @@
       "payer_raw": "GLOBAL TECH SOLUTIONS INC",
       "bank_reference": "ACH20240607003",
       "remittance_text": "INV-2024-0109 2/10 discount taken",
-      "note": "EDGE: Early pay discount — 2% on $45,000 = $900 discount, paid day 8 (within 10-day window)"
+      "note": "EDGE: Early pay discount - 2% on $45,000 = $900 discount, paid day 8 (within 10-day window)"
     },
     {
       "txn_id": "TXN-2024-004",
@@ -46,7 +46,7 @@
       "payer_raw": "MIDWEST MANUFACTURING GROUP",
       "bank_reference": "ACH20240610004",
       "remittance_text": "INV-2024-0105",
-      "note": "EDGE: Unauthorized short pay — $2,000 deduction with no explanation, outside discount window"
+      "note": "EDGE: Unauthorized short pay - $2,000 deduction with no explanation, outside discount window"
     },
     {
       "txn_id": "TXN-2024-005",
@@ -57,7 +57,7 @@
       "payer_raw": "SUMMIT DISTRIBUTION CO",
       "bank_reference": "WIRE20240611005",
       "remittance_text": "INV-2024-0114 less freight allowance $1500",
-      "note": "EDGE: Freight deduction — $1,500 deducted matching freight schedule"
+      "note": "EDGE: Freight deduction - $1,500 deducted matching freight schedule"
     },
     {
       "txn_id": "TXN-2024-006",
@@ -68,7 +68,7 @@
       "payer_raw": "COASTAL ENTERPRISES INTL WIRE",
       "bank_reference": "WIRE20240612006",
       "remittance_text": "",
-      "note": "EDGE: No remittance — unknown reference, must match by customer name + FIFO"
+      "note": "EDGE: No remittance - unknown reference, must match by customer name + FIFO"
     },
     {
       "txn_id": "TXN-2024-007",
@@ -79,7 +79,7 @@
       "payer_raw": "APEX MFG CORP AP DEPT",
       "bank_reference": "ACH20240613007",
       "remittance_text": "INV-2024-0112",
-      "note": "EDGE: Duplicate payment — same amount + payer as TXN-2024-001, 10 days later, same invoice"
+      "note": "EDGE: Duplicate payment - same amount + payer as TXN-2024-001, 10 days later, same invoice"
     },
     {
       "txn_id": "TXN-2024-008",
@@ -90,7 +90,7 @@
       "payer_raw": "NATIONAL LOGISTICS PARTNERS",
       "bank_reference": "WIRE20240614008",
       "remittance_text": "INV-2024-0122",
-      "note": "EDGE: Overpayment — invoice is $50,000, customer paid $2,000 extra"
+      "note": "EDGE: Overpayment - invoice is $50,000, customer paid $2,000 extra"
     },
     {
       "txn_id": "TXN-2024-009",
@@ -101,7 +101,7 @@
       "payer_raw": "HORIZON GLOBAL CORP",
       "bank_reference": "CHK-004821",
       "remittance_text": "PO-7734 balance due",
-      "note": "EDGE: PO number reference — customer used PO not invoice number"
+      "note": "EDGE: PO number reference - customer used PO not invoice number"
     },
     {
       "txn_id": "TXN-2024-010",
@@ -112,7 +112,7 @@
       "payer_raw": "BLUESTONE CAPITAL PARTNERS",
       "bank_reference": "WIRE20240617010",
       "remittance_text": "INV-2024-0116",
-      "note": "EDGE: Bank wire fee deducted — $15 short of $25,000 invoice (JPMorgan $15 fee)"
+      "note": "EDGE: Bank wire fee deducted - $15 short of $25,000 invoice (JPMorgan $15 fee)"
     },
     {
       "txn_id": "TXN-2024-011",
@@ -125,7 +125,7 @@
       "payer_raw": "EUROPA TECH GMBH",
       "bank_reference": "SWIFT20240618011",
       "remittance_text": "RE: INV-2024-0119 EUR payment",
-      "note": "EDGE: FX payment — EUR invoice, paid in EUR, USD equivalent $50,000"
+      "note": "EDGE: FX payment - EUR invoice, paid in EUR, USD equivalent $50,000"
     },
     {
       "txn_id": "TXN-2024-012",
@@ -136,7 +136,7 @@
       "payer_raw": "REDWOOD SOLUTIONS GROUP",
       "bank_reference": "ACH20240619012",
       "remittance_text": "INV-2024-0117 installment 2 of 3",
-      "note": "EDGE: Installment payment — $30,000 invoice, paying $10,000 per month"
+      "note": "EDGE: Installment payment - $30,000 invoice, paying $10,000 per month"
     },
     {
       "txn_id": "TXN-2024-013",
@@ -147,7 +147,7 @@
       "payer_raw": "SILVERLINE TECHNOLOGIES",
       "bank_reference": "ACH20240620013",
       "remittance_text": "INV-2024-0115 net of credit CM-2024-003",
-      "note": "EDGE: Credit memo netted — customer deducted $5,000 credit memo from $25,000 invoice"
+      "note": "EDGE: Credit memo netted - customer deducted $5,000 credit memo from $25,000 invoice"
     },
     {
       "txn_id": "TXN-2024-014",
@@ -158,7 +158,7 @@
       "payer_raw": "CRESTVIEW MANUFACTURING",
       "bank_reference": "ACH20240621014",
       "remittance_text": "INV-2024-0120",
-      "note": "EDGE: Exact match on partial — invoice WAS partially paid before, $18,500 = remaining open amount"
+      "note": "EDGE: Exact match on partial - invoice WAS partially paid before, $18,500 = remaining open amount"
     },
     {
       "txn_id": "TXN-2024-015",
@@ -169,7 +169,7 @@
       "payer_raw": "IRONGATE ENTERPRISES INC",
       "bank_reference": "WIRE20240622015",
       "remittance_text": "JUNE INVOICES SEE ATTACHED",
-      "note": "EDGE: Vague remittance — says 'see attached' but no attachment. Must match 3 open invoices by amount combination."
+      "note": "EDGE: Vague remittance - says 'see attached' but no attachment. Must match 3 open invoices by amount combination."
     },
     {
       "txn_id": "TXN-2024-016",
@@ -191,7 +191,7 @@
       "payer_raw": "RETURNED ACH GREENFIELD SYSTEMS",
       "bank_reference": "RETURN20240624017",
       "remittance_text": "R01 INSUFFICIENT FUNDS",
-      "note": "EDGE: NSF / returned ACH — negative amount, must reverse prior application of INV-2024-0111"
+      "note": "EDGE: NSF / returned ACH - negative amount, must reverse prior application of INV-2024-0111"
     },
     {
       "txn_id": "TXN-2024-018",
@@ -202,7 +202,7 @@
       "payer_raw": "ALPINE SYSTEMS CORPORATION",
       "bank_reference": "WIRE20240625018",
       "remittance_text": "Q2 SETTLEMENT",
-      "note": "EDGE: Large unmatched — no invoice reference, amount doesn't match any single invoice, possible multiple invoices or wrong entity"
+      "note": "EDGE: Large unmatched - no invoice reference, amount doesn't match any single invoice, possible multiple invoices or wrong entity"
     },
     {
       "txn_id": "TXN-2024-019",
@@ -213,7 +213,7 @@
       "payer_raw": "MEADOWBROOK INDUSTRIES",
       "bank_reference": "CHK-009912",
       "remittance_text": "INV-2024-0124 damage deduction $1250",
-      "note": "EDGE: Damage claim deduction — $1,250 deducted from $10,000 invoice for claimed damaged goods"
+      "note": "EDGE: Damage claim deduction - $1,250 deducted from $10,000 invoice for claimed damaged goods"
     },
     {
       "txn_id": "TXN-2024-020",
@@ -224,7 +224,7 @@
       "payer_raw": "CONSOLIDATED FREIGHT CORP",
       "bank_reference": "ACH20240627020",
       "remittance_text": "INV-2024-0108 final balance",
-      "note": "EDGE: Rounding / small balance — $3.47 remaining open balance, write-off candidate"
+      "note": "EDGE: Rounding / small balance - $3.47 remaining open balance, write-off candidate"
     },
     {
       "txn_id": "TXN-2024-021",
@@ -235,7 +235,7 @@
       "payer_raw": "GLOBALTEK SOLUTIONS CORP",
       "bank_reference": "SWIFT20240628021",
       "remittance_text": "INV-2024-0132",
-      "note": "EDGE: SWIFT 35-char name truncation — payer name cut off, requires alias table lookup"
+      "note": "EDGE: SWIFT 35-char name truncation - payer name cut off, requires alias table lookup"
     },
     {
       "txn_id": "TXN-2024-022",
@@ -246,7 +246,7 @@
       "payer_raw": "MOUNTAIN VIEW RETAIL PARTNERS",
       "bank_reference": "ACH20240629022",
       "remittance_text": "INV-2024-0133",
-      "note": "EDGE: DBA name — 'Mountain View Retail Partners' is registered DBA for Crestview Manufacturing (CUST-013)"
+      "note": "EDGE: DBA name - 'Mountain View Retail Partners' is registered DBA for Crestview Manufacturing (CUST-013)"
     },
     {
       "txn_id": "TXN-2024-023",
@@ -257,7 +257,7 @@
       "payer_raw": "SYNTECH OPERATIONS LLC",
       "bank_reference": "ACH20240629023",
       "remittance_text": "INV-2024-0117 installment 3 of 3",
-      "note": "EDGE: Post-acquisition name — Syntech Operations LLC was acquired by / renamed to Redwood Solutions Group (CUST-011)"
+      "note": "EDGE: Post-acquisition name - Syntech Operations LLC was acquired by / renamed to Redwood Solutions Group (CUST-011)"
     },
     {
       "txn_id": "TXN-2024-024",
@@ -268,7 +268,7 @@
       "payer_raw": "IRONGATE GLOBAL HOLDINGS INC",
       "bank_reference": "WIRE20240630024",
       "remittance_text": "IRONGATE ENTERPRISES JUNE INVOICES",
-      "note": "EDGE: Parent/subsidiary — Irongate Global Holdings Inc is parent of Irongate Enterprises Inc (CUST-014). Paying subsidiary's invoices."
+      "note": "EDGE: Parent/subsidiary - Irongate Global Holdings Inc is parent of Irongate Enterprises Inc (CUST-014). Paying subsidiary's invoices."
     },
     {
       "txn_id": "TXN-2024-025",
@@ -279,7 +279,7 @@
       "payer_raw": "CAPITAL TRADE RECEIVABLES LLC",
       "bank_reference": "WIRE20240630025",
       "remittance_text": "MEADOWBROOK INDUSTRIES INV-2024-0136",
-      "note": "EDGE: Third-party factoring — Capital Trade Receivables LLC purchased Meadowbrook Industries (CUST-016) receivables. Paying on their behalf."
+      "note": "EDGE: Third-party factoring - Capital Trade Receivables LLC purchased Meadowbrook Industries (CUST-016) receivables. Paying on their behalf."
     },
     {
       "txn_id": "TXN-2024-026",
@@ -290,7 +290,7 @@
       "payer_raw": "KEYSTONE INDUSTRIAL GROUP",
       "bank_reference": "ACH20240630026",
       "remittance_text": "ADVANCE Q3 PROJECT NEXUS-2024-Q3",
-      "note": "EDGE: Prepayment — $20,000 advance against a future order. No invoice exists yet. Must post to suspense/unearned revenue."
+      "note": "EDGE: Prepayment - $20,000 advance against a future order. No invoice exists yet. Must post to suspense/unearned revenue."
     },
     {
       "txn_id": "TXN-2024-027",
@@ -301,7 +301,7 @@
       "payer_raw": "SUMMIT DISTRIBUTION CO",
       "bank_reference": "ACH20240630027",
       "remittance_text": "INV-2024-0137 2pct discount taken",
-      "note": "EDGE: Late early-pay discount — INV-2024-0137 is $30,000 with 2/10 NET 30. Customer paid day 18 (outside 10-day window). $600 unauthorized discount."
+      "note": "EDGE: Late early-pay discount - INV-2024-0137 is $30,000 with 2/10 NET 30. Customer paid day 18 (outside 10-day window). $600 unauthorized discount."
     },
     {
       "txn_id": "TXN-2024-028",
@@ -312,7 +312,7 @@
       "payer_raw": "BRIARWOOD SUPPLY INC",
       "bank_reference": "CHK-019283",
       "remittance_text": "INV-2024-0138",
-      "note": "EDGE: Post-dated check — check bears date 2024-07-28 (30 days in future). Bank deposited early. Do not apply until check date."
+      "note": "EDGE: Post-dated check - check bears date 2024-07-28 (30 days in future). Bank deposited early. Do not apply until check date."
     },
     {
       "txn_id": "TXN-2024-029",
@@ -323,7 +323,7 @@
       "payer_raw": "OAKDALE MANUFACTURING CO",
       "bank_reference": "CHK-008844",
       "remittance_text": "INV-2023-0889",
-      "note": "EDGE: Stale check — check dated 2023-10-05 (over 8 months old). Exceeds 180-day negotiability window. Return to customer."
+      "note": "EDGE: Stale check - check dated 2023-10-05 (over 8 months old). Exceeds 180-day negotiability window. Return to customer."
     },
     {
       "txn_id": "TXN-2024-030",
@@ -333,8 +333,8 @@
       "payment_type": "WIRE",
       "payer_raw": "NEXUS VENDOR CORP TREASURY",
       "bank_reference": "WIRE20240628030",
-      "remittance_text": "INTERCO NET SETTLE JUNE — AR 15000 AP 6500",
-      "note": "EDGE: Intercompany netting — Nexus Vendor Corp owes us $15,000 (AR) and we owe them $6,500 (AP). Net payment = $8,500. Requires bilateral ledger entry."
+      "remittance_text": "INTERCO NET SETTLE JUNE - AR 15000 AP 6500",
+      "note": "EDGE: Intercompany netting - Nexus Vendor Corp owes us $15,000 (AR) and we owe them $6,500 (AP). Net payment = $8,500. Requires bilateral ledger entry."
     },
     {
       "txn_id": "TXN-2024-031",
@@ -345,7 +345,7 @@
       "payer_raw": "PETRA GLOBAL TRADING FZE",
       "bank_reference": "SWIFT20240627031",
       "remittance_text": "INV-2024-0141 Q2 PAYMENT",
-      "note": "EDGE: Compliance/OFAC hold — payer name 'Petra Global Trading FZE' triggers sanctions screening. SWIFT FZE designation requires compliance review before posting."
+      "note": "EDGE: Compliance/OFAC hold - payer name 'Petra Global Trading FZE' triggers sanctions screening. SWIFT FZE designation requires compliance review before posting."
     },
     {
       "txn_id": "TXN-2024-032",
@@ -356,7 +356,7 @@
       "payer_raw": "HARTWELL PARTNERS EUROPE",
       "bank_reference": "WIRE20240627032",
       "remittance_text": "INV-2024-0142 payment Nexus Software Ltd",
-      "note": "EDGE: Wrong legal entity — payment memo references 'Nexus Software Ltd' (UK entity, separate VAT registration). Received by Nexus Software Inc (US). Requires entity transfer or return."
+      "note": "EDGE: Wrong legal entity - payment memo references 'Nexus Software Ltd' (UK entity, separate VAT registration). Received by Nexus Software Inc (US). Requires entity transfer or return."
     },
     {
       "txn_id": "TXN-2024-033",
@@ -367,7 +367,7 @@
       "payer_raw": "MIDWEST MANUFACTURING GROUP",
       "bank_reference": "ACH20240626033",
       "remittance_text": "INV-2024-0103",
-      "note": "EDGE: Disputed invoice payment — INV-2024-0103 is under active dispute with legal hold. Customer paying it anyway. Do NOT auto-apply. Escalate to Legal/Credit Manager."
+      "note": "EDGE: Disputed invoice payment - INV-2024-0103 is under active dispute with legal hold. Customer paying it anyway. Do NOT auto-apply. Escalate to Legal/Credit Manager."
     },
     {
       "txn_id": "TXN-2024-034",
@@ -378,7 +378,7 @@
       "payer_raw": "PACIFIC NORTHWEST DISTRIBUTERS",
       "bank_reference": "ACH20240626034",
       "remittance_text": "",
-      "note": "EDGE: EDI 820 remittance pending — payment received with no remittance text. EDI 820 file expected within 24-48 hours. Hold in suspense; do not apply FIFO yet."
+      "note": "EDGE: EDI 820 remittance pending - payment received with no remittance text. EDI 820 file expected within 24-48 hours. Hold in suspense; do not apply FIFO yet."
     },
     {
       "txn_id": "TXN-2024-035",
@@ -389,7 +389,7 @@
       "payer_raw": "CLEARWATER TECHNOLOGIES INC",
       "bank_reference": "ACH20240625035",
       "remittance_text": "LEGACY-2024-0144 FINAL PAYMENT",
-      "note": "EDGE: Legacy invoice number — customer references 'LEGACY-2024-0144' from prior ERP system. Cross-reference table maps this to INV-2024-0144 in current ERP."
+      "note": "EDGE: Legacy invoice number - customer references 'LEGACY-2024-0144' from prior ERP system. Cross-reference table maps this to INV-2024-0144 in current ERP."
     }
   ]
 }

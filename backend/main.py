@@ -110,7 +110,7 @@ async def analyze(request: AnalyzeRequest):
     all_results = {}
 
     async def event_stream():
-        # Keepalive pump — sends SSE comment every 10s to prevent Railway proxy timeout
+        # Keepalive pump - sends SSE comment every 10s to prevent Railway proxy timeout
         keepalive_queue: asyncio.Queue = asyncio.Queue()
 
         async def _keepalive():
@@ -156,7 +156,7 @@ async def analyze(request: AnalyzeRequest):
                     f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
                 )
             finally:
-                await keepalive_queue.put(None)  # sentinel — stream done
+                await keepalive_queue.put(None)  # sentinel - stream done
 
         asyncio.create_task(_swarm())
 

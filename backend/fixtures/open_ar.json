@@ -100,7 +100,7 @@
       "status": "OPEN",
       "dispute_reason": null,
       "existing_credit_memo": 0,
-      "note": "TXN-004: $38,000 paid — $2,000 short. No discount terms. Unauthorized deduction."
+      "note": "TXN-004: $38,000 paid - $2,000 short. No discount terms. Unauthorized deduction."
     },
     {
       "invoice_id": "INV-2024-0114",
@@ -120,7 +120,7 @@
       "status": "OPEN",
       "dispute_reason": null,
       "existing_credit_memo": 0,
-      "note": "TXN-005: $48,500 paid. $1,500 freight deduction — per distribution agreement Schedule C."
+      "note": "TXN-005: $48,500 paid. $1,500 freight deduction - per distribution agreement Schedule C."
     },
     {
       "invoice_id": "INV-2024-0125",
@@ -180,7 +180,7 @@
       "status": "OPEN",
       "dispute_reason": null,
       "existing_credit_memo": 0,
-      "note": "TXN-009: PO-7734 reference — customer pays by PO not invoice. Cross-reference matches this invoice."
+      "note": "TXN-009: PO-7734 reference - customer pays by PO not invoice. Cross-reference matches this invoice."
     },
     {
       "invoice_id": "INV-2024-0116",
@@ -443,7 +443,7 @@
       "status": "OPEN",
       "dispute_reason": "Customer disputes line items 3-5, claims pricing error",
       "existing_credit_memo": 0,
-      "note": "Disputed invoice — do NOT auto-apply any cash against this invoice"
+      "note": "Disputed invoice - do NOT auto-apply any cash against this invoice"
     },
     {
       "invoice_id": "INV-2024-0130",
@@ -646,7 +646,7 @@
       "status": "OPEN",
       "dispute_reason": null,
       "existing_credit_memo": 0,
-      "note": "TXN-029: Stale check. Invoice from 2023. Check dated 2023-10-05 (>260 days old). Check cannot be negotiated — return to customer."
+      "note": "TXN-029: Stale check. Invoice from 2023. Check dated 2023-10-05 (>260 days old). Check cannot be negotiated - return to customer."
     },
     {
       "invoice_id": "INV-2024-0140",
@@ -685,10 +685,10 @@
       "aging_days": 44,
       "aging_bucket": "31-60",
       "status": "ON_HOLD",
-      "dispute_reason": "Pending OFAC/sanctions screening — account frozen pending compliance review",
+      "dispute_reason": "Pending OFAC/sanctions screening - account frozen pending compliance review",
       "existing_credit_memo": 0,
       "compliance_flag": "OFAC_SCREENING",
-      "note": "TXN-031: OFAC hold. Petra Global Trading FZE — Gulf-region free zone entity. SWIFT OFAC screening triggered. DO NOT POST without Compliance clearance."
+      "note": "TXN-031: OFAC hold. Petra Global Trading FZE - Gulf-region free zone entity. SWIFT OFAC screening triggered. DO NOT POST without Compliance clearance."
     },
     {
       "invoice_id": "INV-2024-0142",
@@ -730,7 +730,7 @@
       "status": "OPEN",
       "dispute_reason": null,
       "existing_credit_memo": 0,
-      "note": "TXN-034 partial: EDI 820 pending. Payment is $58,000 — may cover this + INV-2024-0143b. Hold in suspense until remittance arrives."
+      "note": "TXN-034 partial: EDI 820 pending. Payment is $58,000 - may cover this + INV-2024-0143b. Hold in suspense until remittance arrives."
     },
     {
       "invoice_id": "INV-2024-0143b",

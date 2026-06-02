@@ -155,7 +155,7 @@ function LiveLog({ lines }) {
       }}
     >
       <div style={{ color: "#4ade80", marginBottom: 6, fontSize: 10 }}>
-        ● LIVE LOG — Azure AI Foundry Agent Service
+        ● LIVE LOG - Azure AI Foundry Agent Service
       </div>
       {lines.map((l, i) => (
         <div key={i} style={{ color: l.color || "#94a3b8", lineHeight: "1.6" }}>
@@ -238,7 +238,7 @@ function BankStatementTable({ transactions }) {
                   {t.payer_raw}
                 </td>
                 <td style={{ padding: "7px 10px", color: "#64748b", maxWidth: 180, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {t.remittance_text || <span style={{ color: "#cbd5e1" }}>—</span>}
+                  {t.remittance_text || <span style={{ color: "#cbd5e1" }}>-</span>}
                 </td>
                 <td style={{ padding: "7px 10px", minWidth: 120 }}>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
@@ -246,7 +246,7 @@ function BankStatementTable({ transactions }) {
                       <span key={bi} style={{ background: badge.color + "18", color: badge.color, borderRadius: 4, padding: "2px 6px", fontSize: 9, fontWeight: 700, whiteSpace: "nowrap" }}>
                         {badge.label}
                       </span>
-                    )) : <span style={{ color: "#cbd5e1", fontSize: 10 }}>—</span>}
+                    )) : <span style={{ color: "#cbd5e1", fontSize: 10 }}>-</span>}
                   </div>
                 </td>
               </tr>
@@ -306,7 +306,7 @@ function ReconciliationResults({ data }) {
             {matches.map((m, i) => {
               const confPct = m.confidence_pct || (m.confidence || 0) * 100;
               const confColor = confPct >= 95 ? "#10b981" : confPct >= 80 ? "#f59e0b" : "#ef4444";
-              const status = m.match_status || m.status || "—";
+              const status = m.match_status || m.status || "-";
               const statusColor = MATCH_STATUS_COLOR[status] || "#64748b";
               const invoiceIds = (m.matched_invoices || []).map(inv =>
                 typeof inv === "string" ? inv : inv.invoice_id
@@ -319,15 +319,15 @@ function ReconciliationResults({ data }) {
                   <td style={{ padding: "7px 10px", fontWeight: 600, color: "#1e293b" }}>{fmt(m.transaction_amount || m.payment_amount || 0)}</td>
                   <td style={{ padding: "7px 10px" }}>
                     <span style={{ background: "#f1f5f9", padding: "2px 6px", borderRadius: 4, fontSize: 10, color: "#475569", fontWeight: 600 }}>
-                      {m.match_tier != null ? `T${m.match_tier}` : "—"}
+                      {m.match_tier != null ? `T${m.match_tier}` : "-"}
                     </span>
                   </td>
                   <td style={{ padding: "7px 10px", color: "#475569", fontSize: 11, maxWidth: 160, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {invoiceIds.slice(0, 3).join(", ") || <span style={{ color: "#cbd5e1" }}>—</span>}
+                    {invoiceIds.slice(0, 3).join(", ") || <span style={{ color: "#cbd5e1" }}>-</span>}
                   </td>
                   <td style={{ padding: "7px 10px", fontWeight: 600, color: "#1e293b" }}>{fmt(m.total_applied || 0)}</td>
                   <td style={{ padding: "7px 10px", fontWeight: 600, color: delta !== 0 ? "#ef4444" : "#10b981" }}>
-                    {delta !== 0 ? `(${fmt(Math.abs(delta))})` : "—"}
+                    {delta !== 0 ? `(${fmt(Math.abs(delta))})` : "-"}
                   </td>
                   <td style={{ padding: "7px 10px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -388,14 +388,14 @@ function ExceptionAnalysis({ data }) {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
                   <div>
                     <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: 600, marginBottom: 4 }}>AI REASONING</div>
-                    <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{ex.reasoning || ex.ai_reasoning || "—"}</div>
+                    <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{ex.reasoning || ex.ai_reasoning || "-"}</div>
                   </div>
                   <div>
                     <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: 600, marginBottom: 4 }}>RECOMMENDED ACTION</div>
-                    <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{ex.recommended_action || ex.action || "—"}</div>
+                    <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{ex.recommended_action || ex.action || "-"}</div>
                     {(ex.gl_code || ex.suggested_gl_code) && (
                       <div style={{ marginTop: 8, background: "#f1f5f9", borderRadius: 6, padding: "6px 10px", fontSize: 11, fontFamily: "monospace", color: "#64748b" }}>
-                        GL: {ex.gl_code || ex.suggested_gl_code} — {ex.gl_description || ex.gl_desc || ""}
+                        GL: {ex.gl_code || ex.suggested_gl_code} - {ex.gl_description || ex.gl_desc || ""}
                       </div>
                     )}
                     <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -415,7 +415,7 @@ function ExceptionAnalysis({ data }) {
                 {ex.deduction_amount && (
                   <div style={{ background: sevColor + "08", border: `1px solid ${sevColor}20`, borderRadius: 6, padding: "8px 12px", fontSize: 11, color: "#475569" }}>
                     Deduction Amount: <strong>{fmt(ex.deduction_amount)}</strong>
-                    {ex.deduction_reason && ` — ${ex.deduction_reason}`}
+                    {ex.deduction_reason && ` - ${ex.deduction_reason}`}
                   </div>
                 )}
               </div>
@@ -456,7 +456,7 @@ function WorkQueue({ data, wqStatus, onStatusChange }) {
 
       {criticalItems.length > 0 && (
         <div style={{ background: "#fef2f2", border: "1.5px solid #fca5a5", borderRadius: 10, padding: "10px 14px", marginBottom: 12 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#dc2626", marginBottom: 8 }}>🔴 CRITICAL — Same-Day Escalation Required</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#dc2626", marginBottom: 8 }}>🔴 CRITICAL - Same-Day Escalation Required</div>
           {criticalItems.map((item, i) => (
             <WQItem key={i} item={item} TEAM_COLOR={TEAM_COLOR} status={wqStatus?.[item.txn_id]} onApprove={() => onStatusChange(item.txn_id, "approved")} onReject={() => onStatusChange(item.txn_id, "rejected")} />
           ))}
@@ -575,7 +575,7 @@ function PostingInstructions({ data }) {
                            (p.invoice_applications || []).reduce((s, ia) => s + (ia.amount || 0), 0) ||
                            p.amount || 0;
             const invoiceIds = (p.invoice_applications || []).map(ia => ia.invoice_id);
-            const action = p.action || "—";
+            const action = p.action || "-";
             const actionColor = ACTION_COLOR[action] || "#64748b";
             const priColor = p.priority === "IMMEDIATE" ? "#dc2626" : p.priority === "TODAY" ? "#f59e0b" : "#64748b";
             return (
@@ -585,15 +585,15 @@ function PostingInstructions({ data }) {
                   <span style={{ background: actionColor + "18", color: actionColor, borderRadius: 4, padding: "2px 6px", fontSize: 9, fontWeight: 700, whiteSpace: "nowrap" }}>{action}</span>
                 </td>
                 <td style={{ padding: "7px 10px", color: "#475569", fontSize: 11, maxWidth: 140, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {invoiceIds.join(", ") || <span style={{ color: "#cbd5e1" }}>—</span>}
+                  {invoiceIds.join(", ") || <span style={{ color: "#cbd5e1" }}>-</span>}
                 </td>
-                <td style={{ padding: "7px 10px", fontFamily: "monospace", fontSize: 10, color: "#1e293b" }}>{debitEntry.account || "—"}</td>
-                <td style={{ padding: "7px 10px", fontFamily: "monospace", fontSize: 10, color: "#1e293b" }}>{creditEntry.account || "—"}</td>
-                <td style={{ padding: "7px 10px", fontWeight: 600, color: "#1e293b" }}>{amount > 0 ? fmt(amount) : "—"}</td>
+                <td style={{ padding: "7px 10px", fontFamily: "monospace", fontSize: 10, color: "#1e293b" }}>{debitEntry.account || "-"}</td>
+                <td style={{ padding: "7px 10px", fontFamily: "monospace", fontSize: 10, color: "#1e293b" }}>{creditEntry.account || "-"}</td>
+                <td style={{ padding: "7px 10px", fontWeight: 600, color: "#1e293b" }}>{amount > 0 ? fmt(amount) : "-"}</td>
                 <td style={{ padding: "7px 10px" }}>
-                  <span style={{ color: priColor, fontWeight: 700, fontSize: 10 }}>{p.priority || "—"}</span>
+                  <span style={{ color: priColor, fontWeight: 700, fontSize: 10 }}>{p.priority || "-"}</span>
                 </td>
-                <td style={{ padding: "7px 10px", color: "#64748b", fontSize: 11, maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.notes || p.erp_action || "—"}</td>
+                <td style={{ padding: "7px 10px", color: "#64748b", fontSize: 11, maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.notes || p.erp_action || "-"}</td>
               </tr>
             );
           })}
@@ -666,8 +666,8 @@ function ARLedgerSummary({ data }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
         {[
           { label: "Total Open AR", value: fmt(stats.total_open_amount || stats.total_open_ar || 0) },
-          { label: "Open Invoices", value: stats.total_invoices || stats.total_open_invoices || "—" },
-          { label: "Customers", value: customers.length || "—" },
+          { label: "Open Invoices", value: stats.total_invoices || stats.total_open_invoices || "-" },
+          { label: "Customers", value: customers.length || "-" },
           { label: "Disputed / Hold", value: (stats.disputed_count || 0) + (stats.legal_hold_count || 0) },
         ].map((s) => (
           <div key={s.label} style={{ background: "#f8fafc", borderRadius: 8, padding: 12, textAlign: "center" }}>
@@ -682,13 +682,13 @@ function ARLedgerSummary({ data }) {
           {aliasCount > 0 && (
             <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: 8, padding: "6px 12px", fontSize: 11 }}>
               <span style={{ color: "#7c3aed", fontWeight: 700 }}>🏷 {aliasCount} payer aliases</span>
-              <span style={{ color: "#64748b" }}> — DBA, SWIFT truncation, M&A names</span>
+              <span style={{ color: "#64748b" }}> - DBA, SWIFT truncation, M&A names</span>
             </div>
           )}
           {legacyCount > 0 && (
             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: "6px 12px", fontSize: 11 }}>
               <span style={{ color: "#3b82f6", fontWeight: 700 }}>🔗 {legacyCount} legacy invoice maps</span>
-              <span style={{ color: "#64748b" }}> — old ERP cross-references</span>
+              <span style={{ color: "#64748b" }}> - old ERP cross-references</span>
             </div>
           )}
         </div>
@@ -707,7 +707,7 @@ function ARLedgerSummary({ data }) {
             {customers.slice(0, 12).map((c, i) => (
               <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
                 <td style={{ padding: "7px 10px", fontWeight: 500, color: "#1e293b" }}>{c.name || c.customer_name}</td>
-                <td style={{ padding: "7px 10px", color: "#475569" }}>{c.invoice_count || "—"}</td>
+                <td style={{ padding: "7px 10px", color: "#475569" }}>{c.invoice_count || "-"}</td>
                 <td style={{ padding: "7px 10px", fontWeight: 600, color: "#1e293b" }}>{fmt(c.total_open || 0)}</td>
                 <td style={{ padding: "7px 10px" }}>
                   {(c.aliases?.length > 0) && <span style={{ background: "#f5f3ff", color: "#7c3aed", borderRadius: 4, padding: "1px 6px", fontSize: 10 }}>{c.aliases.length}</span>}
@@ -743,7 +743,7 @@ function CashAppSummaryBanner({ data }) {
       </div>
       {critEsc > 0 && (
         <div style={{ background: "#dc2626", borderRadius: 8, padding: "8px 14px", marginBottom: 14, fontSize: 12, fontWeight: 700 }}>
-          🔴 {critEsc} CRITICAL compliance escalation{critEsc > 1 ? "s" : ""} — same-day action required
+          🔴 {critEsc} CRITICAL compliance escalation{critEsc > 1 ? "s" : ""} - same-day action required
         </div>
       )}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
@@ -781,7 +781,7 @@ export default function Home() {
   }
 
   const addLog = (text, color) =>
-    setLogLines((prev) => [...prev, { text: `${new Date().toLocaleTimeString()} — ${text}`, color }]);
+    setLogLines((prev) => [...prev, { text: `${new Date().toLocaleTimeString()} - ${text}`, color }]);
 
   async function loadDemoData() {
     const res = await fetch("/api/demo-data");
@@ -789,7 +789,7 @@ export default function Home() {
     setBankData(d.bank_statement);
     setArData(d.open_ar);
     setDataLoaded(true);
-    addLog(`Demo data loaded — ${d.bank_statement?.transactions?.length || 35} bank transactions, ${d.open_ar?.invoices?.length || 38} AR invoices`, "#4ade80");
+    addLog(`Demo data loaded - ${d.bank_statement?.transactions?.length || 35} bank transactions, ${d.open_ar?.invoices?.length || 38} AR invoices`, "#4ade80");
   }
 
   async function runAnalysis() {
@@ -890,7 +890,7 @@ export default function Home() {
         setFinalResult(allResults["CashPostingAgent"]);
         setActiveTab("results");
       }
-      addLog("Swarm complete — all agents finished", "#4ade80");
+      addLog("Swarm complete - all agents finished", "#4ade80");
     }
 
     if (type === "log") {
@@ -929,7 +929,7 @@ export default function Home() {
               <span style={{ color: "#a5b4fc" }}>Powered by AI Agent Service</span>
             </h1>
             <p style={{ fontSize: 16, color: "#c7d2fe", maxWidth: 600, margin: "0 auto" }}>
-              5 specialized AI agents reconcile bank payments to open invoices — handling every edge case from early-pay discounts to FX settlements to NSF returns.
+              5 specialized AI agents reconcile bank payments to open invoices - handling every edge case from early-pay discounts to FX settlements to NSF returns.
             </p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24 }}>
               {!dataLoaded ? (
@@ -1021,7 +1021,7 @@ export default function Home() {
               {/* Bank statement tab */}
               {activeTab === "bank" && (
                 <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #e2e8f0", padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-                  <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 15, marginBottom: 4 }}>Bank Statement — {bankData?.bank}</div>
+                  <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 15, marginBottom: 4 }}>Bank Statement - {bankData?.bank}</div>
                   <div style={{ fontSize: 12, color: "#64748b", marginBottom: 14 }}>{bankData?.company} · Account {bankData?.account} · {bankData?.statement_date}</div>
                   <BankStatementTable transactions={bankData?.transactions} />
                 </div>
@@ -1107,7 +1107,7 @@ function HowItWorks() {
       key: "BankStatementIntelligenceAgent",
       input: "Raw bank statement JSON (35 transactions, payer names, remittance text)",
       output: "Structured payment records with normalized customer names, detected edge case flags",
-      why: "Isolates the noisy normalization work — fuzzy matching payer strings, detecting NSF returns, parsing remittance hints — before any invoice matching begins.",
+      why: "Isolates the noisy normalization work - fuzzy matching payer strings, detecting NSF returns, parsing remittance hints - before any invoice matching begins.",
     },
     {
       key: "ARLedgerAgent",
@@ -1119,13 +1119,13 @@ function HowItWorks() {
       key: "ReconciliationAgent",
       input: "Normalized payments + AR customer index",
       output: "Match tier, confidence score, and matched invoice IDs for every transaction",
-      why: "Uses CodeInterpreterTool to write and execute real Python for exact amount arithmetic — verifying multi-invoice sums, discount calculations, FX conversions without floating point errors.",
+      why: "Uses CodeInterpreterTool to write and execute real Python for exact amount arithmetic - verifying multi-invoice sums, discount calculations, FX conversions without floating point errors.",
     },
     {
       key: "MismatchReasoningAgent",
       input: "All 24 exception transactions with match context",
       output: "AI reasoning text, GL code, severity level, deduction type, and recommended action per exception",
-      why: "Focused purely on the hard cases — short pays, damage claims, unauthorized deductions — where LLM reasoning about business rules and contract terms adds the most value.",
+      why: "Focused purely on the hard cases - short pays, damage claims, unauthorized deductions - where LLM reasoning about business rules and contract terms adds the most value.",
     },
     {
       key: "CashPostingAgent",
@@ -1139,7 +1139,7 @@ function HowItWorks() {
     {
       name: "Azure AI Foundry Agent Service",
       icon: "🤖",
-      desc: "Native managed agent runtime. Each agent is a first-class Azure resource with its own thread context, tools, and lifecycle. No framework wrappers — direct SDK calls to `AIProjectClient`.",
+      desc: "Native managed agent runtime. Each agent is a first-class Azure resource with its own thread context, tools, and lifecycle. No framework wrappers - direct SDK calls to `AIProjectClient`.",
     },
     {
       name: "CodeInterpreterTool",
@@ -1149,7 +1149,7 @@ function HowItWorks() {
     {
       name: "Shared Thread Architecture",
       icon: "🧵",
-      desc: "All 5 agents share a single Azure Thread. Each agent appends its structured JSON output as an assistant message. The next agent reads the full thread history — no custom message passing needed.",
+      desc: "All 5 agents share a single Azure Thread. Each agent appends its structured JSON output as an assistant message. The next agent reads the full thread history - no custom message passing needed.",
     },
     {
       name: "ConnectedAgentTool",
@@ -1233,9 +1233,9 @@ function HowItWorks() {
           <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
             <span style={{ fontSize: 16 }}>🧵</span>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 12, color: "#1e40af", marginBottom: 4 }}>Shared Azure Thread — How Agents Communicate</div>
+              <div style={{ fontWeight: 700, fontSize: 12, color: "#1e40af", marginBottom: 4 }}>Shared Azure Thread - How Agents Communicate</div>
               <div style={{ fontSize: 12, color: "#1e3a8a", lineHeight: 1.6 }}>
-                All 5 agents share one Azure AI Foundry <strong>Thread</strong>. Each agent appends its complete JSON output as an assistant message. When the next agent runs, it reads the entire thread history — so Agent 3 can see Agent 1 and 2's exact outputs without any custom message passing. After Agent 2, the original raw data is replaced with a compact summary to stay within context limits.
+                All 5 agents share one Azure AI Foundry <strong>Thread</strong>. Each agent appends its complete JSON output as an assistant message. When the next agent runs, it reads the entire thread history - so Agent 3 can see Agent 1 and 2's exact outputs without any custom message passing. After Agent 2, the original raw data is replaced with a compact summary to stay within context limits.
               </div>
             </div>
           </div>
@@ -1244,7 +1244,7 @@ function HowItWorks() {
 
       {/* 7 Edge Case Categories */}
       <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #e2e8f0", padding: "24px 28px", marginBottom: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-        <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 17, marginBottom: 6 }}>35 Edge Cases — 7 Categories</div>
+        <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 17, marginBottom: 6 }}>35 Edge Cases - 7 Categories</div>
         <div style={{ fontSize: 13, color: "#64748b", marginBottom: 16 }}>Every edge case that occurs in real-world AR cash application, now handled by the AI agent swarm.</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
           {[

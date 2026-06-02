@@ -16,21 +16,21 @@ NORMALIZATION:
   contract numbers, check numbers, credit memo refs (CM-xxxx)
 
 ANOMALY FLAGS (add all that apply):
-  MISSING_REMITTANCE    — remittance_text is blank or contains no actionable reference
-  POSSIBLE_DUPLICATE    — same payer + amount already seen within 30 days in this statement
-  NSF_RETURN            — negative amount or "R01/R02" return codes in payer/remittance
-  FX_PAYMENT            — currency != USD or "EUR/GBP/CHF" appears in remittance
-  SWIFT_NAME_TRUNCATION — payer name appears cut off (likely 35-char SWIFT field limit)
-  POST_DATED_CHECK      — check payment_type and check date in future vs statement date
-  STALE_CHECK           — check payment_type and check date >180 days before statement date
-  THIRD_PARTY_PAYER     — payer name does not match any known customer; remittance names a different company
-  PARENT_ENTITY_PAYMENT — payer name contains "HOLDINGS", "GROUP", "GLOBAL" and references a known subsidiary
-  EDI_REMITTANCE_PENDING — no remittance but amount is large and round (likely EDI 820 arriving separately)
-  PREPAYMENT            — remittance mentions "advance", "deposit", "Q[1-4]", "prepay", no invoice ref
-  INTERCOMPANY_NET      — remittance mentions "net", "interco", "netting", "AR/AP"
-  COMPLIANCE_HOLD       — payer name contains "FZE", "FZCO", "LLC UAE", "Trading" with Gulf/sanctioned region markers
-  WRONG_LEGAL_ENTITY    — remittance references a different legal entity name than the receiving company
-  DISPUTED_INVOICE      — remittance references an invoice that has status=DISPUTED or ON_HOLD in AR
+  MISSING_REMITTANCE    - remittance_text is blank or contains no actionable reference
+  POSSIBLE_DUPLICATE    - same payer + amount already seen within 30 days in this statement
+  NSF_RETURN            - negative amount or "R01/R02" return codes in payer/remittance
+  FX_PAYMENT            - currency != USD or "EUR/GBP/CHF" appears in remittance
+  SWIFT_NAME_TRUNCATION - payer name appears cut off (likely 35-char SWIFT field limit)
+  POST_DATED_CHECK      - check payment_type and check date in future vs statement date
+  STALE_CHECK           - check payment_type and check date >180 days before statement date
+  THIRD_PARTY_PAYER     - payer name does not match any known customer; remittance names a different company
+  PARENT_ENTITY_PAYMENT - payer name contains "HOLDINGS", "GROUP", "GLOBAL" and references a known subsidiary
+  EDI_REMITTANCE_PENDING - no remittance but amount is large and round (likely EDI 820 arriving separately)
+  PREPAYMENT            - remittance mentions "advance", "deposit", "Q[1-4]", "prepay", no invoice ref
+  INTERCOMPANY_NET      - remittance mentions "net", "interco", "netting", "AR/AP"
+  COMPLIANCE_HOLD       - payer name contains "FZE", "FZCO", "LLC UAE", "Trading" with Gulf/sanctioned region markers
+  WRONG_LEGAL_ENTITY    - remittance references a different legal entity name than the receiving company
+  DISPUTED_INVOICE      - remittance references an invoice that has status=DISPUTED or ON_HOLD in AR
 
 For each transaction:
 - check_date field: extract check date from remittance or bank_reference if available (else null)

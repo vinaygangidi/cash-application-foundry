@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Cash Application Foundry — Azure AI Agent Service",
+  title: "Cash Application Foundry - Azure AI Agent Service",
   description: "Intelligent cash application powered by Azure AI Foundry Agent Service",
 };
 

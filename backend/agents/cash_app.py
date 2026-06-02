@@ -1,5 +1,5 @@
 """
-Cash Application Swarm — Orchestrator
+Cash Application Swarm - Orchestrator
 
 Runs 5 specialized agents in sequence using Azure AI Foundry via AsyncAzureOpenAI.
 Each agent is defined in its own module; this file handles routing, streaming, and retries.
@@ -77,7 +77,7 @@ def _extract_json(text: str) -> dict | None:
         except Exception:
             pass
 
-    # Find first { to last } — handles trailing "NEXT: AgentName" text
+    # Find first { to last } - handles trailing "NEXT: AgentName" text
     try:
         start = text.find("{")
         end   = text.rfind("}") + 1
@@ -110,7 +110,7 @@ def _build_openai_client() -> AsyncAzureOpenAI:
 async def _run_demo_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict, None]:
     """
     Stream pre-built demo results with realistic token animation.
-    No Azure credentials needed — great for demos and development.
+    No Azure credentials needed - great for demos and development.
     """
     import pathlib
 
@@ -167,7 +167,7 @@ async def _run_live_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
     all_results: dict[str, dict] = {}
 
     def _user_content(agent_name: str) -> str:
-        """Build targeted input for each agent — only the fields it actually needs."""
+        """Build targeted input for each agent - only the fields it actually needs."""
         if agent_name == "BankStatementIntelligenceAgent":
             return json.dumps({
                 "task": "Parse and normalize this bank statement. Extract all transactions with flags.",

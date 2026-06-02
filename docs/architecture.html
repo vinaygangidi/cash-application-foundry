@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cash Application Foundry — Problem Statement & Architecture</title>
+  <title>Cash Application Foundry, Problem Statement & Architecture</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: #1e293b; }
@@ -176,14 +176,14 @@
 
   <!-- ═══════════════════════════════════════════════════════════ HEADER -->
   <div class="header">
-    <div class="header-tag">Microsoft Build AI Hackathon 2026 · Theme 05 — Agent Swarms</div>
+    <div class="header-tag">Microsoft Build AI Hackathon 2026 · Theme 05, Agent Swarms</div>
     <h1>Cash Application Foundry<br/><span>5-Agent AI Swarm on Azure AI Foundry</span></h1>
     <div class="header-sub">
-      An intelligent multi-agent system that replaces manual AR cash application with a swarm of 5 specialized AI agents — each powered by the right Azure OpenAI model for its cognitive task — reconciling bank deposits to open invoices with enterprise-grade accuracy across 35 real-world edge cases.
+      An intelligent multi-agent system that replaces manual AR cash application with a swarm of 5 specialized AI agents, each powered by the right Azure OpenAI model for its cognitive task, reconciling bank deposits to open invoices with enterprise-grade accuracy across 35 real-world edge cases.
     </div>
     <div class="header-badges">
       <span class="badge">Azure AI Foundry Agent Service</span>
-      <span class="badge">Azure OpenAI — GPT-4o · GPT-4o-mini · o3-mini</span>
+      <span class="badge">Azure OpenAI, GPT-4o · GPT-4o-mini · o3-mini</span>
       <span class="badge">CodeInterpreterTool</span>
       <span class="badge">ConnectedAgentTool</span>
       <span class="badge">FastAPI SSE Streaming</span>
@@ -197,18 +197,18 @@
     <div class="section-tag">Section 01</div>
     <div class="section-title">Problem Statement</div>
     <div class="section-sub">
-      Accounts Receivable (AR) cash application is one of the most manual, error-prone, and costly processes in enterprise finance. Every day, companies receive hundreds of bank deposits that must be manually matched to open invoices — a process that hasn't fundamentally changed in 30 years.
+      Accounts Receivable (AR) cash application is one of the most manual, error-prone, and costly processes in enterprise finance. Every day, companies receive hundreds of bank deposits that must be manually matched to open invoices, a process that hasn't fundamentally changed in 30 years.
     </div>
 
     <div class="problem-grid">
       <div class="problem-card pain">
-        <div class="problem-card-title">🔴 The Pain — What AR Teams Face Daily</div>
+        <div class="problem-card-title">🔴 The Pain, What AR Teams Face Daily</div>
         <ul class="problem-list">
           <li>Analysts spend <strong>2–4 hours per batch</strong> manually matching bank deposits to invoices in ERP systems</li>
           <li>Bank payer names are <strong>truncated, abbreviated, or changed</strong> due to SWIFT 35-char limits, DBA names, and post-acquisition renames</li>
-          <li>Customers <strong>pay wrong amounts</strong> — early-pay discounts taken late, freight deductions, short pays, damage claims</li>
-          <li>Payments arrive from <strong>wrong entities</strong> — parent companies paying for subsidiaries, factoring agents, intercompany transfers</li>
-          <li><strong>OFAC/sanctions screening</strong> must be done manually — a missed flag is a compliance incident</li>
+          <li>Customers <strong>pay wrong amounts</strong>, early-pay discounts taken late, freight deductions, short pays, damage claims</li>
+          <li>Payments arrive from <strong>wrong entities</strong>, parent companies paying for subsidiaries, factoring agents, intercompany transfers</li>
+          <li><strong>OFAC/sanctions screening</strong> must be done manually, a missed flag is a compliance incident</li>
           <li>Disputed invoices and stale checks get <strong>accidentally applied</strong>, creating downstream ERP errors</li>
           <li>Exception workqueues sit for <strong>3–5 days</strong> without SLA assignment, bloating DSO metrics</li>
         </ul>
@@ -220,7 +220,7 @@
           <li><strong>3–8% manual error rate</strong> on exception transactions creates downstream ERP reconciliation debt</li>
           <li>AR analyst time spent on cash application averages <strong>40% of total AR headcount cost</strong></li>
           <li>Missed compliance holds (OFAC, legal) create <strong>regulatory and reputational risk</strong></li>
-          <li>No systematic exception categorization means <strong>root cause analysis is impossible</strong> — the same errors recur every period</li>
+          <li>No systematic exception categorization means <strong>root cause analysis is impossible</strong>, the same errors recur every period</li>
           <li>Inability to auto-post exceptions blocks <strong>month-end close acceleration</strong></li>
         </ul>
       </div>
@@ -237,13 +237,13 @@
   <!-- ═══════════════════════════════════════════════════════ SOLUTION ARCHITECTURE -->
   <div class="section">
     <div class="section-tag">Section 02</div>
-    <div class="section-title">Solution Architecture — Full System Design</div>
+    <div class="section-title">Solution Architecture: Full System Design</div>
     <div class="section-sub">
-      Cash Application Foundry is built entirely on the Microsoft Azure AI stack. Five specialized agents run natively on Azure AI Foundry Agent Service, each assigned the right Azure OpenAI model for its cognitive task. All agents share a single Azure Thread — no custom message bus needed.
+      Cash Application Foundry is built entirely on the Microsoft Azure AI stack. Five specialized agents run natively on Azure AI Foundry Agent Service, each assigned the right Azure OpenAI model for its cognitive task. All agents share a single Azure Thread, no custom message bus needed.
     </div>
 
     <!-- ── INPUT LAYER ── -->
-    <div class="layer-label">INPUT LAYER — Raw Financial Data</div>
+    <div class="layer-label">INPUT LAYER, Raw Financial Data</div>
     <div class="layer-row cols-3" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 8px;">
       <div class="io-box">
         <div class="icon">🏦</div>
@@ -308,7 +308,7 @@
         <div class="thread-icon">🧵</div>
         <div>
           <div class="thread-title">Azure AI Foundry Shared Thread</div>
-          <div class="thread-desc">All 5 agents share one thread. Each agent appends its structured JSON output as an assistant message. The next agent reads full thread history — zero custom message passing.</div>
+          <div class="thread-desc">All 5 agents share one thread. Each agent appends its structured JSON output as an assistant message. The next agent reads full thread history, zero custom message passing.</div>
         </div>
         <div class="thread-msgs">
           <div class="thread-msg">Agent 1 Output</div>
@@ -329,7 +329,7 @@
           <div class="tool-icon">🐍</div>
           <div>
             <div class="tool-name">CodeInterpreterTool</div>
-            <div class="tool-desc">ReconciliationAgent writes & executes Python in Azure's sandboxed environment. Used for exact multi-invoice arithmetic, 2% discount calculations, FX rate verification — no floating point errors.</div>
+            <div class="tool-desc">ReconciliationAgent writes & executes Python in Azure's sandboxed environment. Used for exact multi-invoice arithmetic, 2% discount calculations, FX rate verification, no floating point errors.</div>
           </div>
         </div>
         <div class="tool-card">
@@ -355,7 +355,7 @@
     <div class="sse-highlight">
       <div class="sse-icon">⚡</div>
       <div>
-        <div class="sse-title">FastAPI SSE Streaming Layer — Railway (Docker)</div>
+        <div class="sse-title">FastAPI SSE Streaming Layer, Railway (Docker)</div>
         <div class="sse-desc">Every token each agent generates fires a MessageDeltaChunk event. FastAPI streams these immediately as SSE events with zero buffering (X-Accel-Buffering: no). The UI lights up in real time as agents think.</div>
       </div>
       <div class="sse-tags">
@@ -372,20 +372,20 @@
     <div class="infra-row" style="margin-bottom: 12px;">
       <div class="infra-card nextjs">
         <div class="infra-tag" style="background:#f1f5f9; color:#475569;">FRONTEND · VERCEL</div>
-        <div class="infra-name">🖥 Next.js 14 — Live Agent Pipeline UI</div>
+        <div class="infra-name">🖥 Next.js 14, Live Agent Pipeline UI</div>
         <div class="infra-desc">Real-time streaming dashboard. 5 agent cards light up sequentially. Tabs for Bank Statement, Reconciliation Results, Exception Analysis (24 items), GL Posting Journal, and Workqueue. EdgeCategoryLegend shows 7-category coverage at a glance.</div>
       </div>
       <div class="infra-card railway">
         <div class="infra-tag">BACKEND · RAILWAY</div>
-        <div class="infra-name">🚂 FastAPI + Docker — Railway Cloud</div>
-        <div class="infra-desc">Dockerized Python backend with <code>/analyze</code> SSE endpoint and <code>/demo-data</code> fixture endpoint. USE_FIXTURES=true for demo reliability — pre-baked agent outputs stream with realistic token animation. Zero Azure API dependency during demo.</div>
+        <div class="infra-name">🚂 FastAPI + Docker, Railway Cloud</div>
+        <div class="infra-desc">Dockerized Python backend with <code>/analyze</code> SSE endpoint and <code>/demo-data</code> fixture endpoint. USE_FIXTURES=true for demo reliability, pre-baked agent outputs stream with realistic token animation. Zero Azure API dependency during demo.</div>
       </div>
     </div>
 
     <div class="flow-arrow">⬇</div>
 
     <!-- Output Layer -->
-    <div class="layer-label">OUTPUT LAYER — ERP-Ready Results</div>
+    <div class="layer-label">OUTPUT LAYER, ERP-Ready Results</div>
     <div class="output-row">
       <div class="output-card gl">
         <div class="out-icon">📒</div>
@@ -426,7 +426,7 @@
   <!-- ═══════════════════════════════════════════════════════ MODEL STRATEGY -->
   <div class="section">
     <div class="section-tag">Section 03</div>
-    <div class="section-title">Multi-Model Strategy — Right Model for Each Task</div>
+    <div class="section-title">Multi-Model Strategy: Right Model for Each Task</div>
     <div class="section-sub">
       The defining architectural decision: we don't use one model for everything. We route each agent to the Azure OpenAI model whose capabilities match the cognitive complexity of the task.
     </div>
@@ -445,14 +445,14 @@
         <tr>
           <td><strong>🏦 BankStatementIntelligenceAgent</strong></td>
           <td><span class="model-pill pill-mini">GPT-4o-mini</span></td>
-          <td>Structured text extraction — no deep reasoning needed. Mini model is 60% cheaper and 3x faster.</td>
+          <td>Structured text extraction, no deep reasoning needed. Mini model is 60% cheaper and 3x faster.</td>
           <td>Parse payer names, detect anomaly flags, output structured JSON</td>
           <td><span class="cost-dot cost-low"></span>Low</td>
         </tr>
         <tr>
           <td><strong>📒 ARLedgerAgent</strong></td>
           <td><span class="model-pill pill-mini">GPT-4o-mini</span></td>
-          <td>Building a lookup index from structured JSON — deterministic, no nuance required.</td>
+          <td>Building a lookup index from structured JSON, deterministic, no nuance required.</td>
           <td>Build customer index, alias registry, legacy invoice map</td>
           <td><span class="cost-dot cost-low"></span>Low</td>
         </tr>
@@ -483,7 +483,7 @@
     <div style="margin-top: 20px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 20px;">
       <div style="font-weight: 700; color: #065f46; font-size: 13px; margin-bottom: 6px;">💡 Why This Matters for Production</div>
       <div style="font-size: 12px; color: #374151; line-height: 1.7;">
-        Running all 5 agents on GPT-4o would cost ~4x more per batch and be slower. Our routing saves ~60% on the two extraction agents (1 & 2), which run on every batch. The o3-mini spend on MismatchReasoningAgent is targeted — it only runs on the 20–30% of transactions that have exceptions, and the reasoning quality directly prevents costly ERP errors.
+        Running all 5 agents on GPT-4o would cost ~4x more per batch and be slower. Our routing saves ~60% on the two extraction agents (1 & 2), which run on every batch. The o3-mini spend on MismatchReasoningAgent is targeted, it only runs on the 20–30% of transactions that have exceptions, and the reasoning quality directly prevents costly ERP errors.
         <strong> This is production-grade cost optimization, not a prototype shortcut.</strong>
       </div>
     </div>
@@ -493,7 +493,7 @@
   <div class="section">
     <div class="section-tag">Section 04</div>
     <div class="section-title">35 Edge Cases Across 7 Categories</div>
-    <div class="section-sub">Every exception type that occurs in real-world enterprise AR — all handled end-to-end by the swarm.</div>
+    <div class="section-sub">Every exception type that occurs in real-world enterprise AR, all handled end-to-end by the swarm.</div>
 
     <div class="edge-grid">
       <div class="edge-card" style="background:#f0fdf4; border-color:#10b98133;">
@@ -565,11 +565,11 @@
       <div class="edge-card" style="background:#fef2f2; border-color:#ef444433; grid-column: 1 / -1;">
         <div class="edge-card-header">
           <span class="edge-card-icon">🔴</span>
-          <span class="edge-card-title" style="color:#991b1b;">Compliance & Legal — CRITICAL PATH</span>
+          <span class="edge-card-title" style="color:#991b1b;">Compliance & Legal, CRITICAL PATH</span>
           <span class="edge-card-count" style="background:#fee2e2; color:#991b1b;">3 cases</span>
         </div>
         <div class="edge-tags">
-          <span class="edge-tag">OFAC/sanctions screening hold (PETRA GLOBAL TRADING FZE — same-day escalation)</span>
+          <span class="edge-tag">OFAC/sanctions screening hold (PETRA GLOBAL TRADING FZE, same-day escalation)</span>
           <span class="edge-tag">Disputed invoice payment block (do-not-apply flag)</span>
           <span class="edge-tag">Legal hold escalation with SLA routing to Compliance Officer</span>
         </div>
@@ -580,29 +580,29 @@
   <!-- ═══════════════════════════════════════════════════════ AGENT DETAIL -->
   <div class="section">
     <div class="section-tag">Section 05</div>
-    <div class="section-title">Agent-by-Agent Design — Inputs, Outputs & Why Separate</div>
+    <div class="section-title">Agent-by-Agent Design: Inputs, Outputs & Why Separate</div>
 
     <div style="display: flex; flex-direction: column; gap: 14px;">
 
       <div style="border: 1.5px solid #3b82f633; border-radius: 12px; overflow: hidden;">
         <div style="background: #eff6ff; padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #bfdbfe;">
           <span style="font-size: 20px;">🏦</span>
-          <div style="flex:1;"><div style="font-weight: 700; color: #1e3a8a; font-size: 14px;">Agent 1 — BankStatementIntelligenceAgent</div><span style="background:#dbeafe; color:#1d4ed8; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o-mini</span></div>
+          <div style="flex:1;"><div style="font-weight: 700; color: #1e3a8a; font-size: 14px;">Agent 1, BankStatementIntelligenceAgent</div><span style="background:#dbeafe; color:#1d4ed8; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o-mini</span></div>
         </div>
         <div style="padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 12px;">
-          <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Raw bank statement JSON — 35 transactions with payer_raw, remittance_text, amount, payment_type, currency, check_date</div></div>
+          <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Raw bank statement JSON, 35 transactions with payer_raw, remittance_text, amount, payment_type, currency, check_date</div></div>
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">OUTPUT</div><div style="color:#374151; line-height:1.6;">Normalized payment records with 13 anomaly flags, payer alias lookup signals, SWIFT truncation flags, check stale/postdate flags</div></div>
-          <div><div style="font-size:10px; font-weight:700; color:#3b82f6; margin-bottom:6px;">WHY SEPARATE?</div><div style="color:#374151; line-height:1.6;">Isolates all noisy text normalization before any invoice matching begins. Mini model handles this cheaply — no business logic reasoning needed here.</div></div>
+          <div><div style="font-size:10px; font-weight:700; color:#3b82f6; margin-bottom:6px;">WHY SEPARATE?</div><div style="color:#374151; line-height:1.6;">Isolates all noisy text normalization before any invoice matching begins. Mini model handles this cheaply, no business logic reasoning needed here.</div></div>
         </div>
       </div>
 
       <div style="border: 1.5px solid #10b98133; border-radius: 12px; overflow: hidden;">
         <div style="background: #f0fdf4; padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #bbf7d0;">
           <span style="font-size: 20px;">📒</span>
-          <div style="flex:1;"><div style="font-weight: 700; color: #065f46; font-size: 14px;">Agent 2 — ARLedgerAgent</div><span style="background:#d1fae5; color:#065f46; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o-mini</span></div>
+          <div style="flex:1;"><div style="font-weight: 700; color: #065f46; font-size: 14px;">Agent 2, ARLedgerAgent</div><span style="background:#d1fae5; color:#065f46; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o-mini</span></div>
         </div>
         <div style="padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 12px;">
-          <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Open AR JSON — 38 invoices, credit memos, payer_alias_registry (6 aliases), parent_child_hierarchy, intercompany_netting, compliance_config</div></div>
+          <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Open AR JSON, 38 invoices, credit memos, payer_alias_registry (6 aliases), parent_child_hierarchy, intercompany_netting, compliance_config</div></div>
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">OUTPUT</div><div style="color:#374151; line-height:1.6;">customer_index keyed by normalized name, invoice lookup map, legacy_invoice_map, do_not_auto_apply list, compliance_flags dict</div></div>
           <div><div style="font-size:10px; font-weight:700; color:#10b981; margin-bottom:6px;">WHY SEPARATE?</div><div style="color:#374151; line-height:1.6;">Builds all lookup structures once so ReconciliationAgent runs pure matching. Separation means AR structure changes don't touch matching logic.</div></div>
         </div>
@@ -611,11 +611,11 @@
       <div style="border: 1.5px solid #f59e0b33; border-radius: 12px; overflow: hidden;">
         <div style="background: #fffbeb; padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #fde68a;">
           <span style="font-size: 20px;">⚖️</span>
-          <div style="flex:1;"><div style="font-weight: 700; color: #92400e; font-size: 14px;">Agent 3 — ReconciliationAgent</div><span style="background:#fef3c7; color:#92400e; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o + CodeInterpreterTool</span></div>
+          <div style="flex:1;"><div style="font-weight: 700; color: #92400e; font-size: 14px;">Agent 3, ReconciliationAgent</div><span style="background:#fef3c7; color:#92400e; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o + CodeInterpreterTool</span></div>
         </div>
         <div style="padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 12px;">
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Normalized payments (Agent 1) + AR customer index (Agent 2) from shared thread. Runs 8 pre-checks before matching.</div></div>
-          <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">OUTPUT</div><div style="color:#374151; line-height:1.6;">35 match records — match_tier (1-8), confidence_pct, matched_invoices, delta, pre_check_triggered, exception flag</div></div>
+          <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">OUTPUT</div><div style="color:#374151; line-height:1.6;">35 match records, match_tier (1-8), confidence_pct, matched_invoices, delta, pre_check_triggered, exception flag</div></div>
           <div><div style="font-size:10px; font-weight:700; color:#f59e0b; margin-bottom:6px;">WHY GPT-4o + CODE?</div><div style="color:#374151; line-height:1.6;">Writes real Python to verify: sum([8750+6500+14000]) == 29250? 0.98 × 30000 == 29400? FX: 20000 EUR × 1.125 == 22500 USD? Exact arithmetic, no hallucination.</div></div>
         </div>
       </div>
@@ -623,7 +623,7 @@
       <div style="border: 1.5px solid #ef444433; border-radius: 12px; overflow: hidden;">
         <div style="background: #fef2f2; padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #fecaca;">
           <span style="font-size: 20px;">🧠</span>
-          <div style="flex:1;"><div style="font-weight: 700; color: #991b1b; font-size: 14px;">Agent 4 — MismatchReasoningAgent</div><span style="background:#fee2e2; color:#991b1b; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">o3-mini (Reasoning Model)</span></div>
+          <div style="flex:1;"><div style="font-weight: 700; color: #991b1b; font-size: 14px;">Agent 4, MismatchReasoningAgent</div><span style="background:#fee2e2; color:#991b1b; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">o3-mini (Reasoning Model)</span></div>
         </div>
         <div style="padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 12px;">
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">24 exception transactions with full match context from Agent 3. Exception flag = true, pre_check_triggered, delta, match_tier.</div></div>
@@ -635,12 +635,12 @@
       <div style="border: 1.5px solid #8b5cf633; border-radius: 12px; overflow: hidden;">
         <div style="background: #f5f3ff; padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #ddd6fe;">
           <span style="font-size: 20px;">✅</span>
-          <div style="flex:1;"><div style="font-weight: 700; color: #5b21b6; font-size: 14px;">Agent 5 — CashPostingAgent</div><span style="background:#ede9fe; color:#5b21b6; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o</span></div>
+          <div style="flex:1;"><div style="font-weight: 700; color: #5b21b6; font-size: 14px;">Agent 5, CashPostingAgent</div><span style="background:#ede9fe; color:#5b21b6; border-radius:4px; padding:1px 8px; font-size:10px; font-weight:700;">GPT-4o</span></div>
         </div>
         <div style="padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 12px;">
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">INPUT</div><div style="color:#374151; line-height:1.6;">Full thread: all agent outputs. 35 reconciliation matches + 24 exception analyses with risk tiers and GL recommendations.</div></div>
           <div><div style="font-size:10px; font-weight:700; color:#94a3b8; margin-bottom:6px;">OUTPUT</div><div style="color:#374151; line-height:1.6;">27 GL posting instructions (debit/credit/account), 19 workqueue items (CRITICAL→LOW, team-routed), cash_application_summary with held/posted/deduction breakdowns</div></div>
-          <div><div style="font-size:10px; font-weight:700; color:#8b5cf6; margin-bottom:6px;">WHY SEPARATE?</div><div style="color:#374151; line-height:1.6;">Separates "think" (Agents 1-4) from "act" (Agent 5). All ERP action generation is isolated — easy to swap ERP targets (SAP vs Oracle vs NetSuite) without touching reasoning logic.</div></div>
+          <div><div style="font-size:10px; font-weight:700; color:#8b5cf6; margin-bottom:6px;">WHY SEPARATE?</div><div style="color:#374151; line-height:1.6;">Separates "think" (Agents 1-4) from "act" (Agent 5). All ERP action generation is isolated, easy to swap ERP targets (SAP vs Oracle vs NetSuite) without touching reasoning logic.</div></div>
         </div>
       </div>
 
@@ -649,9 +649,9 @@
 
   <!-- ═══════════════════════════════════════════ LIVE AZURE SERVICES -->
   <div class="section">
-    <div class="section-tag">Section 06 — Live Today</div>
+    <div class="section-tag">Section 06: Live Today</div>
     <div class="section-title">Azure Services Running in the MVP Right Now</div>
-    <div class="section-sub">Azure Blob Storage and Azure Application Insights are not future state — they are wired up and running in every live batch today. Here is exactly what each service does and what data flows through it.</div>
+    <div class="section-sub">Azure Blob Storage and Azure Application Insights are not future state, they are wired up and running in every live batch today. Here is exactly what each service does and what data flows through it.</div>
 
     <!-- Azure Blob Storage -->
     <div style="border:2px solid #8b5cf6; border-radius:16px; overflow:hidden; margin-bottom:20px;">
@@ -670,12 +670,12 @@
           <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px;">
             <div style="font-size:11px; font-weight:700; color:#5b21b6; margin-bottom:6px;">📥 Input: Bank Statement</div>
             <div style="font-family:monospace; font-size:10px; color:#6b21a8; background:#ede9fe; border-radius:6px; padding:8px; margin-bottom:6px;">{run_id}/bank_statement.json</div>
-            <div style="font-size:11px; color:#374151; line-height:1.6;">Saved immediately when the /analyze request arrives — before any agent runs. Contains the raw bank_data payload plus run_id and timestamp.</div>
+            <div style="font-size:11px; color:#374151; line-height:1.6;">Saved immediately when the /analyze request arrives, before any agent runs. Contains the raw bank_data payload plus run_id and timestamp.</div>
           </div>
           <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px;">
             <div style="font-size:11px; font-weight:700; color:#5b21b6; margin-bottom:6px;">📥 Input: Open AR Ledger</div>
             <div style="font-family:monospace; font-size:10px; color:#6b21a8; background:#ede9fe; border-radius:6px; padding:8px; margin-bottom:6px;">{run_id}/open_ar.json</div>
-            <div style="font-size:11px; color:#374151; line-height:1.6;">Saved at the same time as the bank statement. Contains the ar_data payload. Both inputs are persisted before the swarm starts — crash-safe from the first request.</div>
+            <div style="font-size:11px; color:#374151; line-height:1.6;">Saved at the same time as the bank statement. Contains the ar_data payload. Both inputs are persisted before the swarm starts, crash-safe from the first request.</div>
           </div>
           <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px;">
             <div style="font-size:11px; font-weight:700; color:#5b21b6; margin-bottom:6px;">📤 Output: Full Results</div>
@@ -688,7 +688,7 @@
           <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px;">
             <div style="font-size:11px; font-weight:700; color:#5b21b6; margin-bottom:6px;">📋 Agent Event Log</div>
             <div style="font-family:monospace; font-size:10px; color:#6b21a8; background:#ede9fe; border-radius:6px; padding:8px; margin-bottom:6px;">{run_id}/agent_events.json</div>
-            <div style="font-size:11px; color:#374151; line-height:1.6;">Saved on swarm_complete. Lists every agent_start and agent_complete event with timestamp, agent name, and model used. This is the run timeline — shows how long each agent took.</div>
+            <div style="font-size:11px; color:#374151; line-height:1.6;">Saved on swarm_complete. Lists every agent_start and agent_complete event with timestamp, agent name, and model used. This is the run timeline, shows how long each agent took.</div>
           </div>
           <div style="background:#fdf4ff; border:1px solid #e9d5ff; border-radius:10px; padding:14px;">
             <div style="font-size:11px; font-weight:700; color:#7e22ce; margin-bottom:8px;">🔑 How it authenticates</div>
@@ -701,7 +701,7 @@
 
         <!-- Blob path diagram -->
         <div style="background:#0f172a; border-radius:10px; padding:16px 20px; font-family:monospace; font-size:11px; color:#94a3b8;">
-          <div style="color:#4ade80; margin-bottom:8px; font-size:10px; letter-spacing:1px;">// BLOB CONTAINER STRUCTURE — cash-app-runs/</div>
+          <div style="color:#4ade80; margin-bottom:8px; font-size:10px; letter-spacing:1px;">// BLOB CONTAINER STRUCTURE, cash-app-runs/</div>
           <div style="color:#e2e8f0; line-height:2;">
             <span style="color:#fbbf24;">cash-app-runs/</span><br/>
             &nbsp;&nbsp;<span style="color:#93c5fd;">a3f9c821-.../</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ade80;">← run_id (UUID, unique per batch)</span><br/>
@@ -753,7 +753,7 @@
             <div style="font-size:11px; font-weight:700; color:#0369a1; margin-bottom:8px;">📡 How it's wired up in main.py</div>
             <div style="background:#0f172a; border-radius:8px; padding:12px; font-family:monospace; font-size:10px; color:#e2e8f0; line-height:1.8;">
               <span style="color:#93c5fd;">from</span> azure.monitor.opentelemetry <span style="color:#93c5fd;">import</span> configure_azure_monitor<br/><br/>
-              <span style="color:#4ade80;"># One line — instruments everything</span><br/>
+              <span style="color:#4ade80;"># One line, instruments everything</span><br/>
               configure_azure_monitor(<br/>
               &nbsp;&nbsp;connection_string=_conn_str<br/>
               )<br/><br/>
@@ -775,11 +775,11 @@
 
         <!-- What's NOT tracked yet -->
         <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px;">
-          <div style="font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px;">⚠️ What's not tracked yet — production additions</div>
+          <div style="font-size:11px; font-weight:700; color:#92400e; margin-bottom:8px;">⚠️ What's not tracked yet, production additions</div>
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:11px; color:#374151; line-height:1.6;">
-            <div>Custom metric per agent: <strong>tokens_in / tokens_out</strong> per agent per run — needed for cost tracking per batch</div>
-            <div>Custom event: <strong>agent_parse_failed</strong> when _extract_json returns None — currently silent in MVP, needs an alert rule</div>
-            <div>Custom dimension: <strong>run_id</strong> on every trace — lets you correlate all telemetry for a single batch in one query</div>
+            <div>Custom metric per agent: <strong>tokens_in / tokens_out</strong> per agent per run, needed for cost tracking per batch</div>
+            <div>Custom event: <strong>agent_parse_failed</strong> when _extract_json returns None, currently silent in MVP, needs an alert rule</div>
+            <div>Custom dimension: <strong>run_id</strong> on every trace, lets you correlate all telemetry for a single batch in one query</div>
           </div>
         </div>
       </div>
@@ -790,7 +790,7 @@
   <div class="section">
     <div class="section-tag">Section 07</div>
     <div class="section-title">MVP vs Production Architecture</div>
-    <div class="section-sub">Where we are today vs what a fully productionized deployment looks like. Every MVP decision was made to maximize demo reliability and hackathon speed — each has a clear production upgrade path.</div>
+    <div class="section-sub">Where we are today vs what a fully productionized deployment looks like. Every MVP decision was made to maximize demo reliability and hackathon speed, each has a clear production upgrade path.</div>
 
     <div style="overflow-x:auto;">
       <table style="width:100%; border-collapse:collapse; font-size:12px;">
@@ -811,31 +811,31 @@
           </tr>
           <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;">
             <td style="padding:11px 14px; font-weight:600; color:#1e293b;">Run Storage</td>
-            <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">✅ <strong>Azure Blob Storage live</strong> — inputs + results saved per run_id in <code>cash-app-runs/</code></td>
+            <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">✅ <strong>Azure Blob Storage live</strong>, inputs + results saved per run_id in <code>cash-app-runs/</code></td>
             <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">Add WORM immutability policy + lifecycle tiers (hot → cool → archive) + 7-year SOX retention</td>
-            <td style="padding:11px 14px; color:#4338ca;"><strong>Azure Blob Storage</strong> — already connected, add lifecycle policy</td>
+            <td style="padding:11px 14px; color:#4338ca;"><strong>Azure Blob Storage</strong>, already connected, add lifecycle policy</td>
           </tr>
           <tr style="border-bottom:1px solid #f1f5f9;">
             <td style="padding:11px 14px; font-weight:600; color:#1e293b;">Job Processing</td>
-            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">Synchronous HTTP request — one run blocks the server</td>
-            <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">Async queue — 100+ batches/hour without blocking</td>
+            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">Synchronous HTTP request, one run blocks the server</td>
+            <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">Async queue, 100+ batches/hour without blocking</td>
             <td style="padding:11px 14px; color:#4338ca;"><strong>Azure Service Bus</strong> queue + <strong>Azure Container Apps</strong> worker pool</td>
           </tr>
           <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;">
             <td style="padding:11px 14px; font-weight:600; color:#1e293b;">Persistence</td>
-            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">In-memory only — results lost on page refresh</td>
+            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">In-memory only, results lost on page refresh</td>
             <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">Full run history with replay, search, and export</td>
             <td style="padding:11px 14px; color:#4338ca;"><strong>Azure PostgreSQL Flexible Server</strong> (runs + agent_events + work_queue tables)</td>
           </tr>
           <tr style="border-bottom:1px solid #f1f5f9;">
             <td style="padding:11px 14px; font-weight:600; color:#1e293b;">Authentication</td>
-            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">No auth — anyone can hit the API</td>
+            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">No auth, anyone can hit the API</td>
             <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">SSO with role-based access (AR Analyst / Manager / Admin)</td>
             <td style="padding:11px 14px; color:#4338ca;"><strong>Microsoft Entra ID</strong> (Azure AD) B2B with MSAL</td>
           </tr>
           <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;">
             <td style="padding:11px 14px; font-weight:600; color:#1e293b;">Secrets Management</td>
-            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">.env file — manual rotation, no audit log</td>
+            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">.env file, manual rotation, no audit log</td>
             <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">Centralized secret store with auto-rotation and access logging</td>
             <td style="padding:11px 14px; color:#4338ca;"><strong>Azure Key Vault</strong> with managed identity (no API keys in code)</td>
           </tr>
@@ -847,7 +847,7 @@
           </tr>
           <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;">
             <td style="padding:11px 14px; font-weight:600; color:#1e293b;">ERP Integration</td>
-            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">Output shown in UI only — no ERP write-back</td>
+            <td style="padding:11px 14px; color:#92400e; background:#fffbeb80;">Output shown in UI only, no ERP write-back</td>
             <td style="padding:11px 14px; color:#065f46; background:#f0fdf480;">Auto-post approved GL entries to SAP / Oracle / NetSuite</td>
             <td style="padding:11px 14px; color:#4338ca;"><strong>Azure Logic Apps</strong> with SAP connector + <strong>Azure API Management</strong></td>
           </tr>
@@ -866,7 +866,7 @@
   <div class="section">
     <div class="section-tag">Section 08</div>
     <div class="section-title">Real-time PDF Ingestion Pipeline</div>
-    <div class="section-sub">Production cash application starts with PDF bank statements — not JSON files. This is the full document-to-agent pipeline using Azure Document Intelligence and Azure Service Bus.</div>
+    <div class="section-sub">Production cash application starts with PDF bank statements, not JSON files. This is the full document-to-agent pipeline using Azure Document Intelligence and Azure Service Bus.</div>
 
     <!-- Pipeline diagram -->
     <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
@@ -896,8 +896,8 @@
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div style="background:#eff6ff; border:1.5px solid #3b82f6; border-radius:12px; padding:16px;">
           <div style="font-size:11px; font-weight:700; color:#1d4ed8; margin-bottom:8px;">🧠 AZURE DOCUMENT INTELLIGENCE</div>
-          <div style="font-size:12px; color:#1e293b; font-weight:600; margin-bottom:4px;">Form Recognizer — Custom Bank Statement Model</div>
-          <div style="font-size:11px; color:#374151; line-height:1.6;">Trained on 50+ bank statement formats (BofA, Chase, Citi, HSBC SWIFT statements). Extracts: transaction date, amount, payer name, bank reference, remittance text, check number — with 99.2% field accuracy.</div>
+          <div style="font-size:12px; color:#1e293b; font-weight:600; margin-bottom:4px;">Form Recognizer, Custom Bank Statement Model</div>
+          <div style="font-size:11px; color:#374151; line-height:1.6;">Trained on 50+ bank statement formats (BofA, Chase, Citi, HSBC SWIFT statements). Extracts: transaction date, amount, payer name, bank reference, remittance text, check number, with 99.2% field accuracy.</div>
           <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
             <span style="background:#dbeafe; color:#1d4ed8; border-radius:4px; padding:2px 7px; font-size:9px; font-weight:700;">PDF → JSON</span>
             <span style="background:#dbeafe; color:#1d4ed8; border-radius:4px; padding:2px 7px; font-size:9px; font-weight:700;">Custom Model</span>
@@ -921,7 +921,7 @@
 
       <!-- Row 3: Service Bus -->
       <div style="background:#fdf4ff; border:1.5px solid #a855f7; border-radius:12px; padding:16px;">
-        <div style="font-size:11px; font-weight:700; color:#7e22ce; margin-bottom:8px;">📬 AZURE SERVICE BUS — Processing Queue</div>
+        <div style="font-size:11px; font-weight:700; color:#7e22ce; margin-bottom:8px;">📬 AZURE SERVICE BUS, Processing Queue</div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
           <div style="font-size:11px; color:#374151; line-height:1.6;"><strong style="color:#1e293b;">Message Schema</strong><br/>run_id, company_id, blob_path_bank, blob_path_ar, priority (CRITICAL/NORMAL), submitted_by, submitted_at</div>
           <div style="font-size:11px; color:#374151; line-height:1.6;"><strong style="color:#1e293b;">Dead-Letter Queue</strong><br/>Failed runs after 3 retries go to DLQ with full error context. Ops team alerted via Azure Monitor alert rule within 5 minutes.</div>
@@ -978,7 +978,7 @@
   <!-- ═══════════════════════════════════════════════ AUDIT TRAIL -->
   <div class="section">
     <div class="section-tag">Section 09</div>
-    <div class="section-title">Audit Trail Design — Every Decision is Traceable</div>
+    <div class="section-title">Audit Trail Design: Every Decision is Traceable</div>
     <div class="section-sub">Enterprise finance requires complete, immutable records of every cash application decision. SOX Section 404, ASC 606, and internal audit requirements all mandate traceability from bank deposit to GL entry.</div>
 
     <!-- DB Schema -->
@@ -1083,16 +1083,16 @@
     <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:20px;">
 
       <div style="border:1.5px solid #3b82f633; border-radius:12px; overflow:hidden;">
-        <div style="background:#eff6ff; padding:10px 16px; border-bottom:1px solid #bfdbfe; font-weight:700; font-size:12px; color:#1d4ed8;">🔑 Identity & Access — Microsoft Entra ID</div>
+        <div style="background:#eff6ff; padding:10px 16px; border-bottom:1px solid #bfdbfe; font-weight:700; font-size:12px; color:#1d4ed8;">🔑 Identity & Access, Microsoft Entra ID</div>
         <div style="padding:14px 16px; font-size:11px; color:#374151; line-height:1.7;">
-          <strong>Authentication:</strong> MSAL + Entra ID SSO. No username/password stored — delegated to enterprise IdP.<br/><br/>
+          <strong>Authentication:</strong> MSAL + Entra ID SSO. No username/password stored, delegated to enterprise IdP.<br/><br/>
           <strong>RBAC Roles:</strong><br/>
-          • <span style="background:#dbeafe; color:#1d4ed8; border-radius:3px; padding:1px 5px; font-size:10px;">AR_VIEWER</span> — Read results only<br/>
-          • <span style="background:#d1fae5; color:#065f46; border-radius:3px; padding:1px 5px; font-size:10px;">AR_ANALYST</span> — Approve/reject workqueue + run new batches<br/>
-          • <span style="background:#fef3c7; color:#92400e; border-radius:3px; padding:1px 5px; font-size:10px;">AR_MANAGER</span> — Override AI decisions + export GL entries<br/>
-          • <span style="background:#fee2e2; color:#991b1b; border-radius:3px; padding:1px 5px; font-size:10px;">COMPLIANCE_OFFICER</span> — Access OFAC holds + legal escalations<br/>
-          • <span style="background:#f3e8ff; color:#6b21a8; border-radius:3px; padding:1px 5px; font-size:10px;">ADMIN</span> — Manage tenant config, model routing, thresholds<br/><br/>
-          <strong>Service Accounts:</strong> All Azure services use Managed Identity — no API keys or client secrets stored anywhere.
+          • <span style="background:#dbeafe; color:#1d4ed8; border-radius:3px; padding:1px 5px; font-size:10px;">AR_VIEWER</span>, Read results only<br/>
+          • <span style="background:#d1fae5; color:#065f46; border-radius:3px; padding:1px 5px; font-size:10px;">AR_ANALYST</span>, Approve/reject workqueue + run new batches<br/>
+          • <span style="background:#fef3c7; color:#92400e; border-radius:3px; padding:1px 5px; font-size:10px;">AR_MANAGER</span>, Override AI decisions + export GL entries<br/>
+          • <span style="background:#fee2e2; color:#991b1b; border-radius:3px; padding:1px 5px; font-size:10px;">COMPLIANCE_OFFICER</span>, Access OFAC holds + legal escalations<br/>
+          • <span style="background:#f3e8ff; color:#6b21a8; border-radius:3px; padding:1px 5px; font-size:10px;">ADMIN</span>, Manage tenant config, model routing, thresholds<br/><br/>
+          <strong>Service Accounts:</strong> All Azure services use Managed Identity, no API keys or client secrets stored anywhere.
         </div>
       </div>
 
@@ -1101,7 +1101,7 @@
         <div style="padding:14px 16px; font-size:11px; color:#374151; line-height:1.7;">
           <strong>At Rest:</strong> Azure Storage encryption (AES-256) + PostgreSQL Transparent Data Encryption. Customer-managed keys via Azure Key Vault HSM for regulated industries.<br/><br/>
           <strong>In Transit:</strong> TLS 1.3 enforced on all endpoints. Azure Front Door + WAF for the public UI. Private endpoints for all backend Azure services (no public internet exposure).<br/><br/>
-          <strong>LLM Data Privacy:</strong> Azure OpenAI processes data within your Azure tenant — data does NOT leave your subscription. Model is not retrained on your financial data. All prompts include a "do not store" policy header.<br/><br/>
+          <strong>LLM Data Privacy:</strong> Azure OpenAI processes data within your Azure tenant, data does NOT leave your subscription. Model is not retrained on your financial data. All prompts include a "do not store" policy header.<br/><br/>
           <strong>PII Minimization:</strong> Payer names are hashed before logging in non-production environments. Customer IDs used instead of company names in agent prompts where possible.
         </div>
       </div>
@@ -1119,7 +1119,7 @@
       <div style="border:1.5px solid #f59e0b33; border-radius:12px; overflow:hidden;">
         <div style="background:#fffbeb; padding:10px 16px; border-bottom:1px solid #fde68a; font-weight:700; font-size:12px; color:#92400e;">🛡 Network & Infrastructure Security</div>
         <div style="padding:14px 16px; font-size:11px; color:#374151; line-height:1.7;">
-          <strong>Network Isolation:</strong> All Azure resources deployed in a dedicated VNet. PostgreSQL, Blob Storage, Service Bus, and Key Vault accessed only via Private Endpoints — no public internet exposure.<br/><br/>
+          <strong>Network Isolation:</strong> All Azure resources deployed in a dedicated VNet. PostgreSQL, Blob Storage, Service Bus, and Key Vault accessed only via Private Endpoints, no public internet exposure.<br/><br/>
           <strong>WAF + DDoS:</strong> Azure Front Door with WAF policy (OWASP 3.2) in front of the Next.js frontend. Azure DDoS Protection Standard on VNet.<br/><br/>
           <strong>Secrets:</strong> Zero secrets in code or environment variables in production. All credentials stored in Azure Key Vault, accessed via Managed Identity. Secret rotation automated with 90-day policy.<br/><br/>
           <strong>Monitoring:</strong> Microsoft Defender for Cloud enabled. Azure Monitor alerts on: failed auth attempts, unusual data volumes, COMPLIANCE_HOLD spike, agent failure rate &gt;5%.
@@ -1129,7 +1129,7 @@
 
     <!-- Security summary row -->
     <div style="background:linear-gradient(135deg,#0f172a,#1e3a8a); border-radius:12px; padding:18px 22px; color:#fff;">
-      <div style="font-size:11px; font-weight:700; color:#93c5fd; letter-spacing:1px; margin-bottom:10px;">SECURITY CHECKLIST — PRODUCTION READINESS</div>
+      <div style="font-size:11px; font-weight:700; color:#93c5fd; letter-spacing:1px; margin-bottom:10px;">SECURITY CHECKLIST, PRODUCTION READINESS</div>
       <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
         <div style="font-size:11px; line-height:1.7; color:#e0e7ff;">
           <div style="font-weight:700; color:#fff; margin-bottom:4px;">Authentication</div>
@@ -1154,14 +1154,14 @@
   <!-- ═══════════════════════════════════════════════ SCALE ROADMAP -->
   <div class="section">
     <div class="section-tag">Section 11</div>
-    <div class="section-title">Scale Roadmap — From MVP to Enterprise Platform</div>
+    <div class="section-title">Scale Roadmap: From MVP to Enterprise Platform</div>
     <div class="section-sub">Three phases to take Cash Application Foundry from hackathon prototype to a platform that processes millions of transactions per month across multiple companies.</div>
 
     <div style="display:flex; flex-direction:column; gap:12px;">
 
       <div style="border:1.5px solid #10b98133; border-radius:12px; overflow:hidden;">
         <div style="background:#f0fdf4; padding:12px 18px; border-bottom:1px solid #bbf7d0; display:flex; align-items:center; gap:12px;">
-          <span style="background:#10b981; color:#fff; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700;">Phase 1 — Now</span>
+          <span style="background:#10b981; color:#fff; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700;">Phase 1, Now</span>
           <span style="font-weight:700; font-size:13px; color:#065f46;">Hackathon MVP</span>
           <span style="margin-left:auto; font-size:11px; color:#64748b;">1 company · 35 txns/batch · &lt;60 sec fixture / ~4 min live</span>
         </div>
@@ -1175,7 +1175,7 @@
 
       <div style="border:1.5px solid #3b82f633; border-radius:12px; overflow:hidden;">
         <div style="background:#eff6ff; padding:12px 18px; border-bottom:1px solid #bfdbfe; display:flex; align-items:center; gap:12px;">
-          <span style="background:#3b82f6; color:#fff; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700;">Phase 2 — 3 Months</span>
+          <span style="background:#3b82f6; color:#fff; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700;">Phase 2, 3 Months</span>
           <span style="font-weight:700; font-size:13px; color:#1e3a8a;">Production Beta</span>
           <span style="margin-left:auto; font-size:11px; color:#64748b;">3 pilot companies · 500 txns/day · async queue</span>
         </div>
@@ -1191,7 +1191,7 @@
 
       <div style="border:1.5px solid #8b5cf633; border-radius:12px; overflow:hidden;">
         <div style="background:#f5f3ff; padding:12px 18px; border-bottom:1px solid #ddd6fe; display:flex; align-items:center; gap:12px;">
-          <span style="background:#8b5cf6; color:#fff; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700;">Phase 3 — 12 Months</span>
+          <span style="background:#8b5cf6; color:#fff; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700;">Phase 3, 12 Months</span>
           <span style="font-weight:700; font-size:13px; color:#5b21b6;">Enterprise SaaS Platform</span>
           <span style="margin-left:auto; font-size:11px; color:#64748b;">50+ companies · 1M+ txns/month · multi-region</span>
         </div>
@@ -1210,14 +1210,14 @@
     <div style="margin-top:16px; background:#fef3c7; border:1px solid #fde68a; border-radius:10px; padding:14px 18px;">
       <div style="font-weight:700; color:#92400e; font-size:13px; margin-bottom:6px;">💡 The Compounding Advantage</div>
       <div style="font-size:12px; color:#374151; line-height:1.7;">
-        Every batch processed makes the system smarter. <strong>Agent event logs</strong> feed a fine-tuning dataset — after 10,000 batches, MismatchReasoningAgent is trained on your company's specific deduction patterns, customer behaviors, and contract terms. The model's accuracy improves while cost drops (fine-tuned smaller models outperform generic large ones on domain-specific tasks). This is the moat: generic AI tools can match the MVP, but they cannot replicate 12 months of company-specific fine-tuning data.
+        Every batch processed makes the system smarter. <strong>Agent event logs</strong> feed a fine-tuning dataset, after 10,000 batches, MismatchReasoningAgent is trained on your company's specific deduction patterns, customer behaviors, and contract terms. The model's accuracy improves while cost drops (fine-tuned smaller models outperform generic large ones on domain-specific tasks). This is the moat: generic AI tools can match the MVP, but they cannot replicate 12 months of company-specific fine-tuning data.
       </div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════ FOOTER -->
   <div style="text-align: center; padding: 24px; color: #94a3b8; font-size: 12px;">
-    <strong style="color: #1e293b;">Cash Application Foundry</strong> · Microsoft Build AI Hackathon 2026 · Theme 05 — Agent Swarms ·
+    <strong style="color: #1e293b;">Cash Application Foundry</strong> · Microsoft Build AI Hackathon 2026 · Theme 05, Agent Swarms ·
     <a href="https://github.com/vinaygangidi/cash-application-foundry" style="color: #3b82f6;">github.com/vinaygangidi/cash-application-foundry</a>
   </div>
 
