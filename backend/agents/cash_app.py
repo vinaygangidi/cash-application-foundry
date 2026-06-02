@@ -114,7 +114,7 @@ async def _run_demo_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
     """
     import pathlib
 
-    demo_file = pathlib.Path(__file__).parent.parent / "fixtures" / "cash_app_results.json"
+    demo_file = pathlib.Path(__file__).parent.parent / "data" / "cash_app_results.json"
 
     if not demo_file.exists():
         yield {"event": "error", "message": "Demo data file not found. Set USE_FIXTURES=false to use live Azure mode."}

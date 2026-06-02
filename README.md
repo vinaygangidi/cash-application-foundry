@@ -156,7 +156,7 @@ cash-application-foundry/
 │   │   ├── reconciliation_agent.py  # Agent 3: prompt, model config, metadata
 │   │   ├── mismatch_agent.py        # Agent 4: prompt, model config, metadata
 │   │   └── posting_agent.py         # Agent 5: prompt, model config, metadata
-│   ├── fixtures/
+│   ├── data/
 │   │   ├── bank_statement.json      # 35-transaction demo bank statement
 │   │   ├── open_ar.json             # 38-invoice demo AR ledger
 │   │   └── cash_app_results.json    # Pre-built demo data results

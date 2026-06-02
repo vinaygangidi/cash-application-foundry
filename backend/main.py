@@ -61,7 +61,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FIXTURES_DIR = Path(__file__).parent / "fixtures"
+FIXTURES_DIR = Path(__file__).parent / "data"
 SAMPLES_DIR = FIXTURES_DIR / "samples"
 
 

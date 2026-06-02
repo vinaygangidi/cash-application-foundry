@@ -8,7 +8,7 @@ Run from repo root: python backend/scripts/generate_samples.py
 import json
 from pathlib import Path
 
-SAMPLES_DIR = Path(__file__).parent.parent / "fixtures" / "samples"
+SAMPLES_DIR = Path(__file__).parent.parent / "data" / "samples"
 
 BASE_CONFIG = {
     "auto_writeoff_config": {
