@@ -174,21 +174,62 @@ cash-application-foundry/
 
 ## Running it locally
 
-### Step 1: Backend (demo mode, no Azure account needed)
+You need: **Python 3.11+**, **Node.js 18+**, and **Git**. That is it for demo mode. For live Azure mode you also need an Azure AI Foundry project.
+
+### Step 1: Clone the repo
+
+```bash
+git clone https://github.com/vinaygangidi/cash-application-foundry.git
+cd cash-application-foundry
+```
+
+### Step 2: Backend setup
 
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate        # Mac/Linux
+# .venv\Scripts\activate         # Windows
+
 pip install -r requirements.txt
+```
 
-echo "USE_FIXTURES=true" > .env
+### Step 3: Configure environment variables
 
+Copy the example file and fill it in:
+
+```bash
+cp .env.example .env
+```
+
+**Demo mode** (runs on built-in sample data, no Azure account needed):
+
+```
+USE_FIXTURES=true
+```
+
+That is the only line you need for demo mode. Leave everything else blank.
+
+**Live Azure mode** (runs the real agents against your Azure AI Foundry project):
+
+```
+AZURE_AI_ENDPOINT=https://your-resource-name.services.ai.azure.com
+AZURE_API_KEY=your_api_key_here
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+USE_FIXTURES=false
+```
+
+Where to find these values: go to [ai.azure.com](https://ai.azure.com), open your project, click Overview. The endpoint and key are listed there.
+
+### Step 4: Start the backend
+
+```bash
 uvicorn main:app --port 8001 --reload
 ```
 
-Demo mode streams pre-built results with realistic token animation. Great for development and demos.
+You should see: `Uvicorn running on http://0.0.0.0:8001`
 
-### Step 2: Frontend
+### Step 5: Frontend setup (separate terminal)
 
 ```bash
 cd frontend
@@ -196,33 +237,11 @@ npm install
 NEXT_PUBLIC_API_URL=http://localhost:8001 npm run dev
 ```
 
-Open `http://localhost:3000`, click Load Demo Data, then Run Cash Application.
+Open `http://localhost:3000` in your browser. Click **Load Demo Data**, then **Run Cash Application**.
 
-### Live Azure mode
+### Verify it is working
 
-```bash
-# backend/.env
-AZURE_AI_ENDPOINT=https://<your-resource>.services.ai.azure.com
-
-MODEL_BANK_AGENT=gpt-4o-mini
-MODEL_AR_AGENT=gpt-4o-mini
-MODEL_RECON_AGENT=gpt-4o
-MODEL_REASONING_AGENT=gpt-5
-MODEL_POSTING_AGENT=gpt-4o
-
-# Optional but recommended
-AZURE_STORAGE_ACCOUNT_URL=https://<your-storage>.blob.core.windows.net/
-APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...
-
-USE_FIXTURES=false
-
-# Auth: pick one
-AZURE_API_KEY=<your-key>
-# OR Service Principal (for production):
-AZURE_CLIENT_ID=<sp-client-id>
-AZURE_CLIENT_SECRET=<sp-secret>
-AZURE_TENANT_ID=<tenant-id>
-```
+The UI shows 5 agents running one after another with streaming output. The full pipeline takes about 30-60 seconds in demo mode and 2-4 minutes in live Azure mode depending on the model.
 
 
 ## Deploying to Railway + Vercel
