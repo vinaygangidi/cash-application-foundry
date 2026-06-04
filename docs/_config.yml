@@ -4,7 +4,6 @@ author: Vinay Gangidi
 email: vinay.gangidi@gmail.com
 
 theme: jekyll-theme-minimal
-logo: /assets/logo.png
 
 # GitHub Pages settings
 repository: vinaygangidi/cash-application-foundry
@@ -12,6 +11,8 @@ github_user: vinaygangidi
 
 # Build settings
 markdown: kramdown
+encoding: utf-8
+
 plugins:
   - jekyll-github-metadata
   - jekyll-seo-tag
