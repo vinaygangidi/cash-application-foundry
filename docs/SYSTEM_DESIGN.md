@@ -1,3 +1,8 @@
+---
+layout: default
+title: System Design
+---
+
 # Cash Application Foundry - System Design
 
 ## Architecture Overview

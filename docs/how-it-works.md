@@ -1,3 +1,8 @@
+---
+layout: default
+title: How It Works
+---
+
 # How Cash Application Foundry Works: A Complete Step-by-Step Guide
 
 This guide explains what happens inside the system when you click "Run Cash Application". Written for non-technical stakeholders.

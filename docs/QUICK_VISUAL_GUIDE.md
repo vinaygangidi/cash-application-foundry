@@ -1,3 +1,8 @@
+---
+layout: default
+title: Quick Visual Guide
+---
+
 # Cash Application Foundry: Quick Visual Guide
 
 **A one-page visual explanation for non-technical people**

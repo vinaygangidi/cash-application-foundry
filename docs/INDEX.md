@@ -1,3 +1,8 @@
+---
+layout: default
+title: Home
+---
+
 # Cash Application Foundry
 
 Automate cash application and accounts receivable reconciliation with AI. Process 35 transactions in 56 seconds instead of 6 hours.

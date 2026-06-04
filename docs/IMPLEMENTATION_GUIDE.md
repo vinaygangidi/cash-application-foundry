@@ -1,3 +1,8 @@
+---
+layout: default
+title: Implementation Guide
+---
+
 # Cash Application Foundry - Implementation Guide
 
 Complete guide for setup, configuration, API reference, and troubleshooting.
