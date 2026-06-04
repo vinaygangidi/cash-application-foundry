@@ -8,16 +8,14 @@ Live Demo: https://cash-application-foundry.vercel.app
 
 ## Documentation
 
-All documentation is in the `/docs` folder. Start here based on your role:
+All documentation is available as an interactive GitHub Pages website:
 
-**Start with:** docs/INDEX.md
-This master guide directs you to the right documentation for your role.
+**View Documentation:** https://vinaygangidi.github.io/cash-application-foundry/
 
-## Documentation Files
-
-- **docs/INDEX.md** - Master navigation guide for all documentation
-- **docs/how-it-works.md** - Complete explanation for non-technical readers
-- **docs/QUICK_VISUAL_GUIDE.md** - One-page visual summary with diagrams
+Or read directly from the `/docs` folder in this repository:
+- **index.md** / **INDEX.md** - Navigation guide for all documentation
+- **how-it-works.md** - Complete explanation for non-technical readers
+- **QUICK_VISUAL_GUIDE.md** - One-page visual summary with diagrams
 - **IMPLEMENTATION_GUIDE.md** - Setup, configuration, API reference
 - **SYSTEM_DESIGN.md** - Technical architecture and design details
 

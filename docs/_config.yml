@@ -1,0 +1,34 @@
+title: Cash Application Foundry
+description: Automate cash application and AR reconciliation with AI
+author: Vinay Gangidi
+email: vinay.gangidi@gmail.com
+
+theme: jekyll-theme-minimal
+logo: /assets/logo.png
+
+# GitHub Pages settings
+repository: vinaygangidi/cash-application-foundry
+github_user: vinaygangidi
+
+# Navigation
+nav_title: Documentation
+nav_links:
+  - title: Home
+    url: /
+  - title: How It Works
+    url: /how-it-works.html
+  - title: Quick Start
+    url: /QUICK_VISUAL_GUIDE.html
+  - title: Setup Guide
+    url: /IMPLEMENTATION_GUIDE.html
+  - title: Technical Design
+    url: /SYSTEM_DESIGN.html
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-github-metadata
+  - jekyll-seo-tag
+  - jekyll-feed
+
+permalink: /:title

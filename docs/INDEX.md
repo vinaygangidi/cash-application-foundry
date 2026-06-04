@@ -1,74 +1,66 @@
-# Documentation Guide
+# Cash Application Foundry
 
-Choose your starting point based on your role.
+Automate cash application and accounts receivable reconciliation with AI. Process 35 transactions in 56 seconds instead of 6 hours.
+
+**Live Demo:** [cash-application-foundry.vercel.app](https://cash-application-foundry.vercel.app)
+
+---
+
+## Choose Your Documentation
+
+### I want to understand how it works
+[How It Works](how-it-works.md) - Complete step-by-step explanation with real examples
+**Time: 15-20 minutes**
+
+### I want a quick overview
+[Quick Visual Guide](QUICK_VISUAL_GUIDE.md) - One-page summary with diagrams
+**Time: 5 minutes**
+
+### I need to set it up or integrate it
+[Implementation Guide](IMPLEMENTATION_GUIDE.md) - Setup, configuration, API reference, troubleshooting
+**Time: 30 minutes**
+
+### I want technical deep dive
+[System Design](SYSTEM_DESIGN.md) - Architecture, data models, security, compliance
+**Time: 45 minutes**
+
+---
 
 ## By Role
 
-### Executives / Stakeholders
-Start: how-it-works.md (read sections 1-4, then "Real-World Impact")
-Time: 15 minutes
+**Executives / Stakeholders**
+Start: [How It Works](how-it-works.md) → Business value section
 
-### Sales / Marketing
-Start: QUICK_VISUAL_GUIDE.md
-Then: how-it-works.md (Real-World Impact section)
-Time: 20 minutes
+**Sales / Marketing**
+Start: [Quick Visual Guide](QUICK_VISUAL_GUIDE.md) → [How It Works](how-it-works.md)
 
-### Finance / AR Teams
-Start: how-it-works.md (complete)
-Then: IMPLEMENTATION_GUIDE.md (setup and usage)
-Time: 30-40 minutes
+**Finance / AR Teams**
+Start: [How It Works](how-it-works.md) → [Implementation Guide](IMPLEMENTATION_GUIDE.md)
 
-### Developers / Architects
-Start: SYSTEM_DESIGN.md (all sections)
-Then: IMPLEMENTATION_GUIDE.md (API and code structure)
-Time: 1-1.5 hours
+**Developers / Architects**
+Start: [System Design](SYSTEM_DESIGN.md) → [Implementation Guide](IMPLEMENTATION_GUIDE.md)
 
-### Auditors / Compliance
-Start: SYSTEM_DESIGN.md (sections 7-8: Security & Compliance)
-Then: how-it-works.md (Compliance section)
-Time: 20 minutes
+**Auditors / Compliance**
+Start: [System Design](SYSTEM_DESIGN.md) (Security sections) → [How It Works](how-it-works.md)
 
-### New Team Members
-Start: QUICK_VISUAL_GUIDE.md (5 minutes)
-Then: how-it-works.md (15 minutes)
-Then: IMPLEMENTATION_GUIDE.md (setup section)
-Finally: Run locally with demo data
-Time: 1-2 hours
+**New Team Members**
+Start: [Quick Visual Guide](QUICK_VISUAL_GUIDE.md) → [How It Works](how-it-works.md) → [Implementation Guide](IMPLEMENTATION_GUIDE.md)
 
-## All Documentation
+---
 
-**how-it-works.md**
-Complete step-by-step explanation of how the system works when a user triggers it. Includes 56-second timeline, real examples, architecture, and security.
-Best for: Understanding the complete flow
+## Key Features
 
-**QUICK_VISUAL_GUIDE.md**
-One-page visual summary with ASCII diagrams, timeline, agent breakdowns, and before/after comparison.
-Best for: Quick overview and presentations
+- Processes 35 transactions in 56 seconds (vs 6 hours manual)
+- 100% accurate matching with code-verified math
+- Handles 35 edge cases (freight deductions, SWIFT truncation, factoring, etc)
+- Immutable 7-year audit trail
+- Compliant with OFAC pre-checks and holds
+- Azure-native (data stays in your tenant)
 
-**SYSTEM_DESIGN.md**
-Technical architecture with 12 sections covering design, data models, security, compliance, and scaling.
-Best for: Deep technical understanding
+---
 
-**IMPLEMENTATION_GUIDE.md**
-Setup instructions, environment configuration, API reference, troubleshooting, and customization.
-Best for: Getting it running and maintaining it
+## Repository
 
-## Common Questions
-
-Where do I find:
-
-- How the system works? Start with how-it-works.md
-- Setup instructions? See IMPLEMENTATION_GUIDE.md
-- API documentation? IMPLEMENTATION_GUIDE.md > API Reference
-- Security details? SYSTEM_DESIGN.md > Security Model
-- How to troubleshoot? IMPLEMENTATION_GUIDE.md > Troubleshooting
-- Architecture diagram? See system-design-drawio.xml or ASCII diagram in how-it-works.md
-- Deployment guide? IMPLEMENTATION_GUIDE.md > Deployment
-- Real example walkthrough? how-it-works.md > Real-World Example
-- Before/after comparison? QUICK_VISUAL_GUIDE.md > Before/After
-
-## GitHub Repository
-
-https://github.com/vinaygangidi/cash-application-foundry
+[GitHub: vinaygangidi/cash-application-foundry](https://github.com/vinaygangidi/cash-application-foundry)
 
 Author: Vinay Gangidi
