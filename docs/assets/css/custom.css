@@ -1,17 +1,129 @@
 /* Custom styles for Cash Application Foundry documentation */
 
-/* Make content wider and responsive */
-.wrapper {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+* {
   box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   font-size: 14px;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* Page header - fixed at top */
+.page-header {
+  background: #ffffff;
+  border-bottom: 1px solid #eee;
+  padding: 20px 0;
+  width: 100%;
+  z-index: 10;
+  position: relative;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.page-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.page-header h1 a {
+  color: #333;
+  text-decoration: none;
+}
+
+.page-header h1 a:hover {
+  color: #0366d6;
+}
+
+.page-header p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.page-header .view {
+  margin-top: 15px;
+}
+
+.page-header .view a {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #0366d6;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.page-header .view a:hover {
+  background: #0256b8;
+}
+
+/* Main content area - flexible grow */
+.page-content {
+  flex: 1;
+  width: 100%;
+  padding: 20px 0;
+  min-height: calc(100vh - 300px);
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Sections */
+section {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Page footer - at bottom */
+.page-footer {
+  background: #f6f8fa;
+  border-top: 1px solid #eee;
+  padding: 20px 0;
+  width: 100%;
+  margin-top: auto;
+  clear: both;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.page-footer p {
+  margin: 5px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.page-footer a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.page-footer a:hover {
+  text-decoration: underline;
 }
 
 /* Code and pre-formatted text */
@@ -29,6 +141,7 @@ pre {
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
   display: block;
+  margin: 20px 0;
 }
 
 /* ASCII diagrams and code blocks */
@@ -41,7 +154,6 @@ pre {
   margin: 20px 0;
   display: block;
   width: 100%;
-  box-sizing: border-box;
 }
 
 /* Table responsive design */
@@ -50,9 +162,7 @@ table {
   width: 100%;
   margin: 20px 0;
   font-size: 13px;
-  display: block;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  display: table;
 }
 
 table thead {
@@ -63,7 +173,6 @@ table th, table td {
   border: 1px solid #ddd;
   padding: 8px 12px;
   text-align: left;
-  white-space: nowrap;
 }
 
 table th {
@@ -79,33 +188,28 @@ img {
   margin: 20px 0;
 }
 
-/* Section container */
-section {
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.4;
+  margin: 20px 0 10px 0;
 }
 
 h1 {
   font-size: 32px;
-  margin: 20px 0 10px 0;
 }
 
 h2 {
   font-size: 26px;
-  margin: 20px 0 10px 0;
 }
 
 h3 {
   font-size: 22px;
-  margin: 15px 0 8px 0;
+}
+
+h4 {
+  font-size: 18px;
 }
 
 /* Lists */
@@ -145,24 +249,6 @@ hr {
   margin: 30px 0;
 }
 
-/* Header styling */
-header {
-  width: 100%;
-  margin-bottom: 30px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
-}
-
-header h1 {
-  margin-top: 0;
-  font-size: 28px;
-}
-
-header p {
-  margin: 5px 0;
-  color: #666;
-}
-
 /* Paragraphs */
 p {
   margin: 10px 0 15px 0;
@@ -178,15 +264,59 @@ em {
   font-style: italic;
 }
 
-/* Mobile responsive design */
-@media (max-width: 768px) {
+/* Tablet responsive design */
+@media (max-width: 1024px) {
   .wrapper {
-    padding: 10px;
-    max-width: 100%;
+    padding: 0 15px;
   }
 
   body {
     font-size: 13px;
+  }
+
+  .page-header {
+    padding: 15px 0;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+  }
+}
+
+/* Mobile responsive design */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 0 12px;
+  }
+
+  body {
+    font-size: 13px;
+  }
+
+  .page-header {
+    padding: 12px 0;
+  }
+
+  .header-content, .footer-content {
+    padding: 0 12px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .page-header p {
+    font-size: 13px;
+  }
+
+  .page-content {
+    padding: 15px 0;
   }
 
   code, pre {
@@ -221,16 +351,33 @@ em {
   h3 {
     font-size: 18px;
   }
-
-  header h1 {
-    font-size: 22px;
-  }
 }
 
-/* Extra small screens */
+/* Small screens */
 @media (max-width: 480px) {
-  .wrapper {
-    padding: 8px;
+  .wrapper, .header-content, .footer-content {
+    padding: 0 8px;
+  }
+
+  .page-header {
+    padding: 10px 0;
+  }
+
+  .page-content {
+    padding: 10px 0;
+  }
+
+  body {
+    font-size: 12px;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  .page-header p {
+    font-size: 12px;
   }
 
   h1 {
@@ -241,11 +388,20 @@ em {
     font-size: 18px;
   }
 
+  h3 {
+    font-size: 16px;
+  }
+
   code, pre {
     font-size: 10px;
   }
 
   table {
     font-size: 11px;
+  }
+
+  .page-header .view a {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }
