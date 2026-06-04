@@ -13,19 +13,33 @@ html, body {
 body {
   font-size: 14px;
   overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
   line-height: 1.6;
+  padding: 0 !important;
 }
 
-/* Page header - fixed at top */
+/* Override theme fixed positioning */
+header {
+  position: static !important;
+  width: auto !important;
+  float: none !important;
+  padding: 0 !important;
+}
+
+footer {
+  position: static !important;
+  width: auto !important;
+  float: none !important;
+  bottom: auto !important;
+  padding: 0 !important;
+}
+
+/* Page header - NOT fixed */
 .page-header {
   background: #ffffff;
   border-bottom: 1px solid #eee;
   padding: 20px 0;
   width: 100%;
-  z-index: 10;
-  position: relative;
+  position: static;
 }
 
 .header-content {
@@ -73,12 +87,11 @@ body {
   background: #0256b8;
 }
 
-/* Main content area - flexible grow */
+/* Main content area */
 .page-content {
-  flex: 1;
   width: 100%;
   padding: 20px 0;
-  min-height: calc(100vh - 300px);
+  clear: both;
 }
 
 .wrapper {
@@ -86,22 +99,26 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  float: none !important;
+  width: auto !important;
 }
 
 /* Sections */
 section {
   width: 100%;
   overflow-x: hidden;
+  float: none !important;
+  padding-bottom: 50px !important;
 }
 
-/* Page footer - at bottom */
+/* Page footer - NOT fixed */
 .page-footer {
   background: #f6f8fa;
   border-top: 1px solid #eee;
   padding: 20px 0;
   width: 100%;
-  margin-top: auto;
   clear: both;
+  position: static;
 }
 
 .footer-content {
