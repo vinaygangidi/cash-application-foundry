@@ -1,0 +1,251 @@
+/* Custom styles for Cash Application Foundry documentation */
+
+/* Make content wider and responsive */
+.wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 14px;
+  overflow-x: hidden;
+}
+
+/* Code and pre-formatted text */
+code, pre {
+  font-size: 12px;
+  background: #f6f8fa;
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+
+pre {
+  padding: 16px;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  display: block;
+}
+
+/* ASCII diagrams and code blocks */
+.ascii-diagram, code[class*="language-"] {
+  font-family: 'Courier New', monospace;
+  background: #f6f8fa;
+  padding: 12px;
+  border-left: 3px solid #0366d6;
+  overflow-x: auto;
+  margin: 20px 0;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Table responsive design */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 13px;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table thead {
+  background: #f6f8fa;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+table th {
+  background-color: #f6f8fa;
+  font-weight: 600;
+}
+
+/* Image responsive */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px 0;
+}
+
+/* Section container */
+section {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: 32px;
+  margin: 20px 0 10px 0;
+}
+
+h2 {
+  font-size: 26px;
+  margin: 20px 0 10px 0;
+}
+
+h3 {
+  font-size: 22px;
+  margin: 15px 0 8px 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+/* Links */
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid #0366d6;
+  padding-left: 12px;
+  margin-left: 0;
+  margin-right: 0;
+  color: #666;
+  font-style: italic;
+}
+
+/* Horizontal rules */
+hr {
+  border: none;
+  border-top: 2px solid #eee;
+  margin: 30px 0;
+}
+
+/* Header styling */
+header {
+  width: 100%;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+header h1 {
+  margin-top: 0;
+  font-size: 28px;
+}
+
+header p {
+  margin: 5px 0;
+  color: #666;
+}
+
+/* Paragraphs */
+p {
+  margin: 10px 0 15px 0;
+  line-height: 1.6;
+}
+
+/* Strong and emphasis */
+strong {
+  font-weight: 600;
+}
+
+em {
+  font-style: italic;
+}
+
+/* Mobile responsive design */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 10px;
+    max-width: 100%;
+  }
+
+  body {
+    font-size: 13px;
+  }
+
+  code, pre {
+    font-size: 11px;
+  }
+
+  pre {
+    padding: 12px;
+  }
+
+  .ascii-diagram {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  table th, table td {
+    padding: 6px 8px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 8px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  code, pre {
+    font-size: 10px;
+  }
+
+  table {
+    font-size: 11px;
+  }
+}
