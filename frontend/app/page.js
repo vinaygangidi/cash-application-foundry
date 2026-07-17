@@ -277,14 +277,32 @@ function ReconciliationResults({ data }) {
   const summary = data.reconciliation_summary || data.summary || {};
   if (!matches.length) return null;
 
+  // Derive tile counts from the actual rows so they always sum to the total —
+  // the agent's summary fields (matched_exact, etc.) undercount multi-invoice /
+  // intercompany / other non-"exact" outcomes, so tiles wouldn't add up otherwise.
+  const HOLD_STATUSES = new Set([
+    "COMPLIANCE_HOLD", "WRONG_ENTITY", "DISPUTED_INVOICE_HOLD", "POST_DATED_HOLD",
+    "STALE_CHECK_RETURN", "HOLD_EDI_PENDING",
+  ]);
+  const rowStatus = (m) => m.match_status || m.status || "-";
+  const isException = (m) => m.exception === true || rowStatus(m) === "UNMATCHED";
+  const isHold = (m) => HOLD_STATUSES.has(rowStatus(m));
+  const totalTxns = matches.length;
+  const holds = matches.filter(isHold).length;
+  const exceptions = matches.filter((m) => !isHold(m) && isException(m)).length;
+  const applied = totalTxns - holds - exceptions; // matched (exact, multi-invoice, intercompany, etc.)
+  const totalReceived = summary.total_cash_received != null
+    ? summary.total_cash_received
+    : matches.reduce((sum, m) => sum + (m.transaction_amount || 0), 0);
+
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 20 }}>
         {[
-          { label: "Total Received", value: fmt(summary.total_cash_received || 0), color: "#3b82f6" },
-          { label: "Exact Matches", value: summary.matched_exact || 0, color: "#10b981" },
-          { label: "Exceptions", value: summary.matched_with_exceptions || 0, color: "#ef4444" },
-          { label: "Compliance Holds", value: summary.compliance_holds || 0, color: "#dc2626" },
+          { label: "Total Received", value: fmt(totalReceived || 0), color: "#3b82f6" },
+          { label: `Applied (${applied}/${totalTxns})`, value: applied, color: "#10b981" },
+          { label: "Exceptions", value: exceptions, color: "#ef4444" },
+          { label: "Compliance Holds", value: holds, color: "#dc2626" },
         ].map((s) => (
           <div key={s.label} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: 16, textAlign: "center" }}>
             <div style={{ fontSize: 22, fontWeight: 700, color: s.color }}>{s.value}</div>

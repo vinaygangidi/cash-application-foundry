@@ -235,6 +235,28 @@ platform rebuilds.
 
 ## 9. Changelog / session history
 
+### 2026-07-17 — Reconciliation summary tiles didn't sum to total (frontend)
+**Symptom:** running sample 04 (Multi-Entity) showed "5 Exact Matches / 0 Exceptions /
+0 Compliance Holds" for 7 transactions — the tiles didn't add up (5 ≠ 7). The two missing
+txns were a MULTI_INVOICE match and an INTERCOMPANY_NET — both handled correctly in the
+detail table, but with **no summary bucket** to count them.
+**Root cause:** the tiles read the agent's `reconciliation_summary` fields, and
+`matched_exact` counts **only** `MATCHED` (T1) rows. The schema
+([reconciliation_agent.py:77-89](backend/agents/reconciliation_agent.py#L77-L89)) has no
+field for multi-invoice / intercompany / other non-exact outcomes, so those txns fell out
+of the headline tiles entirely.
+**Fix (frontend-only, `ReconciliationResults` in `frontend/app/page.js`):** derive the tile
+counts from the actual `matches` rows instead of the agent summary, so they always sum to
+the total and self-correct against LLM miscounts. Tiles are now
+`Total Received · Applied (X/Y) · Exceptions · Compliance Holds`, where every row lands in
+exactly one bucket: **Holds** = pre-check hold statuses (`COMPLIANCE_HOLD`, `WRONG_ENTITY`,
+`DISPUTED_INVOICE_HOLD`, `POST_DATED_HOLD`, `STALE_CHECK_RETURN`, `HOLD_EDI_PENDING`);
+**Exceptions** = `exception:true` or `UNMATCHED`; **Applied** = everything else (exact,
+multi-invoice, intercompany, FIFO, discount, …). Sample 04 now reads **Applied (7/7)**.
+Verified with `next build` (compiles clean). **Needs a Vercel redeploy to reach production.**
+Note: the Open-AR-total vs applied-cash gap on sample 04 ($292,300 vs $285,450 = the
+netted intercompany invoice INV-04-004) is expected for an intercompany scenario, not a bug.
+
 ### 2026-07-17 — Overview crash + live-mode determinism (branch merged to `main`)
 Investigation triggered by two reported symptoms: (1) clicking **Overview** after running the
 agents threw "a client-side exception has occurred"; (2) repeated runs of the same dataset gave
