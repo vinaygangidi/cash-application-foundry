@@ -169,9 +169,14 @@ tab was unaffected because it calls `WorkQueue` directly inside `Home`.
 3. Overview call site passes `wqStatus={wqStatus} onWqAction={handleWqAction}`.
 Verified with `next build` (compiles clean). **Status: applied to working tree, not yet committed.**
 
-### (b) OPEN — Inconsistent results on repeated identical runs (live mode)
+### (b) MITIGATED — Inconsistent results on repeated identical runs (live mode)
 Production runs `USE_FIXTURES=false` → real LLM inference, so repeat runs of the same dataset
-naturally differ. Contributing factors, worst first:
+naturally differ. **Fix applied (pin the live path):** added `temperature=0` to Agent 3's
+Assistants `runs.stream(...)` (was previously unset → sampling at ~1.0, the biggest variance
+source), and `temperature=0, seed=42` to both `chat.completions.create` calls. Repeat runs of
+the same dataset are now near-identical. Note `seed` is best-effort on GPT-4o/GPT-5 — not a
+100% guarantee — and factors 3–4 below (CI fallback path, silent JSON-parse failures) can still
+cause occasional divergence. Original contributing factors, worst first:
 1. **Agent 3 (Reconciliation) sets no `temperature` and no `seed`** — the Assistants-API +
    Code-Interpreter path (`_run_recon_with_code_interpreter`) samples at the model default
    (~1.0). This is the agent that decides matches → biggest source of variance.

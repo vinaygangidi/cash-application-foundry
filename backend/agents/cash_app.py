@@ -187,6 +187,7 @@ async def _run_recon_with_code_interpreter(
         async with client.beta.threads.runs.stream(
             thread_id=thread.id,
             assistant_id=assistant.id,
+            temperature=0,
         ) as stream:
             async for event in stream:
                 evt = getattr(event, "event", "")
@@ -351,6 +352,7 @@ async def _run_live_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
                         stream=True,
                         max_tokens=max_tokens,
                         temperature=0,
+                        seed=42,
                         timeout=300,
                     )
 
@@ -379,7 +381,7 @@ async def _run_live_swarm(bank_data: dict, ar_data: dict) -> AsyncGenerator[dict
                     response_text = ""
                     stream = await client.chat.completions.create(
                         model=model, messages=messages, stream=True,
-                        max_tokens=max_tokens, temperature=0, timeout=300,
+                        max_tokens=max_tokens, temperature=0, seed=42, timeout=300,
                     )
                     async for chunk in stream:
                         if chunk.choices:
