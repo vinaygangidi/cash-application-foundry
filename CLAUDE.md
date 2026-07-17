@@ -167,16 +167,18 @@ tab was unaffected because it calls `WorkQueue` directly inside `Home`.
 1. `AgentOutputSection({ ..., wqStatus, onWqAction })` — added the two props.
 2. `WorkQueue ... onStatusChange={onWqAction}`.
 3. Overview call site passes `wqStatus={wqStatus} onWqAction={handleWqAction}`.
-Verified with `next build` (compiles clean). **Status: applied to working tree, not yet committed.**
+Verified with `next build` (compiles clean). **Status: committed (`88c355d`) and pushed to `main`.
+Needs a Vercel redeploy to reach production.**
 
 ### (b) MITIGATED — Inconsistent results on repeated identical runs (live mode)
 Production runs `USE_FIXTURES=false` → real LLM inference, so repeat runs of the same dataset
 naturally differ. **Fix applied (pin the live path):** added `temperature=0` to Agent 3's
 Assistants `runs.stream(...)` (was previously unset → sampling at ~1.0, the biggest variance
 source), and `temperature=0, seed=42` to both `chat.completions.create` calls. Repeat runs of
-the same dataset are now near-identical. Note `seed` is best-effort on GPT-4o/GPT-5 — not a
-100% guarantee — and factors 3–4 below (CI fallback path, silent JSON-parse failures) can still
-cause occasional divergence. Original contributing factors, worst first:
+the same dataset are now near-identical. **Status: committed (`285371e`) and pushed to `main`.
+Needs a Railway redeploy to reach production.** Note `seed` is best-effort on GPT-4o/GPT-5 —
+not a 100% guarantee — and factors 3–4 below (CI fallback path, silent JSON-parse failures) can
+still cause occasional divergence. Original contributing factors, worst first:
 1. **Agent 3 (Reconciliation) sets no `temperature` and no `seed`** — the Assistants-API +
    Code-Interpreter path (`_run_recon_with_code_interpreter`) samples at the model default
    (~1.0). This is the agent that decides matches → biggest source of variance.
@@ -212,3 +214,43 @@ cause occasional divergence. Original contributing factors, worst first:
   `USE_FIXTURES`, optional storage/telemetry.
 - **Docs → GitHub Pages** (Jekyll, `docs/`).
 - Azure blob + app-insights are wired but degrade gracefully if unconfigured.
+
+### Triggering & verifying a redeploy
+A push to `main` deploys **only if** the platform's GitHub auto-deploy is enabled; otherwise
+redeploy manually from the dashboard. A code fix on `main` is NOT live until the relevant
+platform rebuilds.
+
+- **Frontend (Vercel):** frontend-only changes (e.g. `frontend/app/page.js`) → redeploy Vercel.
+  Verify by loading the app, running the agents, and clicking the affected tab.
+- **Backend (Railway):** backend changes (e.g. `backend/agents/cash_app.py`) → redeploy Railway.
+  Verify with:
+  ```bash
+  curl https://cash-application-foundry-production.up.railway.app/health
+  # confirm use_fixtures / azure_blob_storage / sample_count are as expected
+  ```
+  ⚠️ Confirm you're checking the **right backend** — the `cash-app-foundry-iq` sibling has its
+  own Railway URL (`cash-app-foundry-iq-backend-production.up.railway.app`) with different env.
+
+---
+
+## 9. Changelog / session history
+
+### 2026-07-17 — Overview crash + live-mode determinism (branch merged to `main`)
+Investigation triggered by two reported symptoms: (1) clicking **Overview** after running the
+agents threw "a client-side exception has occurred"; (2) repeated runs of the same dataset gave
+inconsistent results.
+
+- **Diagnosed the two-repo / deployment confusion.** The reported backend was initially
+  `cash-app-foundry-iq` (`use_fixtures: true`), but the actual one for this repo is
+  `cash-application-foundry-production.up.railway.app`, which reports `use_fixtures: "false"`
+  → production runs the **live LLM swarm**, not fixtures. This reframed the "inconsistent
+  results" issue as live-mode nondeterminism.
+- **`88c355d` — Overview tab crash fix.** `AgentOutputSection`'s `CashPostingAgent` branch
+  referenced `wqStatus`/`handleWqAction` without receiving them as props → `ReferenceError`
+  only on the Overview tab after Agent 5 completed. Threaded the two through as props. Verified
+  with `next build`. (Also introduced this CLAUDE.md.)
+- **`285371e` — live-swarm determinism.** Added `temperature=0` to Agent 3's Assistants
+  `runs.stream(...)` (previously unset → ~1.0, the biggest variance source) and
+  `temperature=0, seed=42` to both `chat.completions.create` calls. Verified `py_compile`.
+- Both commits merged fast-forward to `main` and pushed. **Redeploys still required**
+  (Vercel for the frontend fix, Railway for the backend fix) — see §8.
