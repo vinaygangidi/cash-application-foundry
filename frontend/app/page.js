@@ -603,7 +603,7 @@ function PostingInstructions({ data }) {
   );
 }
 
-function AgentOutputSection({ agentKey, agentResults, bankData }) {
+function AgentOutputSection({ agentKey, agentResults, bankData, wqStatus, onWqAction }) {
   const meta = AGENT_META[agentKey];
   const result = agentResults[agentKey];
   if (!result) return null;
@@ -641,7 +641,7 @@ function AgentOutputSection({ agentKey, agentResults, bankData }) {
         )}
         {agentKey === "CashPostingAgent" && (
           <>
-            <WorkQueue data={result} wqStatus={wqStatus} onStatusChange={handleWqAction} />
+            <WorkQueue data={result} wqStatus={wqStatus} onStatusChange={onWqAction} />
             <div style={{ marginTop: 20 }}>
               <div style={{ fontWeight: 600, color: "#1e293b", marginBottom: 10, fontSize: 13 }}>GL Posting Journal</div>
               <PostingInstructions data={result} />
@@ -1078,7 +1078,7 @@ export default function Home() {
                 <div>
                   {finalResult && <CashAppSummaryBanner data={finalResult} />}
                   {AGENT_ORDER.filter((k) => agentResults[k]).map((k) => (
-                    <AgentOutputSection key={k} agentKey={k} agentResults={agentResults} bankData={bankData} />
+                    <AgentOutputSection key={k} agentKey={k} agentResults={agentResults} bankData={bankData} wqStatus={wqStatus} onWqAction={handleWqAction} />
                   ))}
                   {!finalResult && !loading && Object.keys(agentResults).length === 0 && (
                     <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #e2e8f0", padding: "40px", textAlign: "center", color: "#94a3b8" }}>
