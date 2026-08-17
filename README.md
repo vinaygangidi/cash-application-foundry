@@ -122,8 +122,8 @@ needs three variables that `.env.example` does not document: `AZURE_SUBSCRIPTION
 | `MODEL_RECON_AGENT` | No | `gpt-4o` | Model for agent 3 |
 | `MODEL_REASONING_AGENT` | No | `gpt-4o` | Model for agent 4 |
 | `MODEL_POSTING_AGENT` | No | `gpt-4o` | Model for agent 5 |
-| `AZURE_STORAGE_ACCOUNT_URL` | No | `""` | Blob endpoint for the run audit trail. Uses `DefaultAzureCredential` |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | No | `""` | Enables Azure Monitor if set |
+| `AZURE_STORAGE_ACCOUNT_URL` | No | `""` | Blob endpoint for the run audit trail, via `DefaultAzureCredential`. The original demo storage account has been deleted; point this at a new one to re-enable |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | No | `""` | Enables Azure Monitor if set. The original demo instance has been deleted; provision a new one to re-enable |
 | `AZURE_SUBSCRIPTION_ID` | Script only | `""` | Required by `register_agents.py` |
 | `AZURE_RESOURCE_GROUP` | Script only | `""` | Required by `register_agents.py` |
 | `AZURE_PROJECT_NAME` | Script only | `""` | Required by `register_agents.py` |
@@ -146,11 +146,17 @@ disagree unless you set the variables explicitly.
   [ledger-sense](https://github.com/vinaygangidi/ledger-sense), implements the
   deterministic-guardrail approach for comparison.
 - **No tests.** No test suite and no CI. `.github/` contains only `copilot-instructions.md`.
-- **Audit-trail failures are silent.** Application Insights initialization and every Blob
-  Storage write are wrapped in bare `except Exception: pass`. A broken audit trail is
-  indistinguishable from an unconfigured one at runtime, and `/health` reports only whether
-  the client object was constructed — not whether uploads succeed. For a system whose
-  selling point is SOX-ready traceability, this needs fixing before any real use.
+- **Azure demo resources have been decommissioned.** The Application Insights instance and
+  the Blob Storage account used during the hackathon no longer exist. The integration code
+  remains in place, so telemetry and the Blob audit trail come back by provisioning new
+  resources and setting `APPLICATIONINSIGHTS_CONNECTION_STRING` and
+  `AZURE_STORAGE_ACCOUNT_URL`.
+- **Audit-trail failures are silent, which matters once it is reconnected.** Application
+  Insights initialization and every Blob Storage write are wrapped in bare
+  `except Exception: pass`, and `/health` reports only whether the client object was
+  constructed — not whether uploads succeed. A misconfigured audit trail is therefore
+  indistinguishable from an intentionally unconfigured one. Worth adding an explicit
+  health signal before relying on this for traceability.
 - **CORS is wide open.** `allow_origins=["*"]` with all methods and headers.
 - **No field allowlist on model payloads.** Agent-selected slices of the full bank and AR
   JSON are sent to Azure OpenAI. Bank account numbers, routing numbers, or tax IDs present
