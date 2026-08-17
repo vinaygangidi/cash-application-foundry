@@ -1,180 +1,188 @@
 # Cash Application Foundry
 
-A multi-agent AI system built on Microsoft's cloud platform that automates accounts receivable reconciliation. Processes 35 transactions in under 60 seconds with complete audit traceability. Replaces manual work that typically takes 6 hours.
+Sequential 5-agent Azure AI Foundry swarm for AR cash application; FastAPI backend, Next.js dashboard.
 
-Live Demo: https://cash-application-foundry.vercel.app
+![Language](https://img.shields.io/badge/language-Python-blue?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/vinaygangidi/cash-application-foundry?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
-Full Documentation: https://vinaygangidi.github.io/cash-application-foundry/
+**Live demo:** https://cash-application-foundry.vercel.app
+**Full documentation:** https://vinaygangidi.github.io/cash-application-foundry/
 
----
+Built for Microsoft Build AI Hackathon 2026 (theme: Agent Swarms).
 
-## Why This Matters: 2.3 Trillion Dollars in Trapped Working Capital
+## What This Does
 
-Every company selling on credit has an AR team matching bank deposits to invoices. The problem is that this work requires judgment, not just pattern matching.
+Automates accounts receivable cash application — matching incoming bank deposits to open
+invoices — using five Azure OpenAI agents in a sequential hand-off. The hard part of AR
+reconciliation is not pattern matching but judgment: whether a $250 shortfall is a
+legitimate freight deduction or an unauthorized short pay, whether a payment from an
+unfamiliar name is a factoring relationship, whether an invoice under legal dispute
+should be posted at all.
 
-Real examples AR analysts face daily:
+Each agent handles one stage and passes structured JSON to the next. Agent 3 runs its
+arithmetic in a real Python sandbox rather than generating numbers, so allocation math is
+executed instead of predicted.
 
-1. Freight deduction detective work: Customer sends $29,250 but invoice was $29,500. Is this a legitimate freight charge, a damaged goods claim, or an unauthorized short pay? Answer is 15 minutes of manual research.
+## How It Works
 
-2. SWIFT name truncation: Bank shows payer as "GREENFIELD TECH SOLUT" because wire transfers cut names at 35 characters. Actual customer is "Greenfield Technology Solutions LLC." Someone looks it up manually every time.
-
-3. Factoring relationships: Payment arrives from "ACE Capital Partners" but your customer is "Riverside Manufacturing." Turns out ACE factored the invoice. Decision is to route to correct entity. This is compliance critical.
-
-4. Legal holds: Payment arrives for an invoice in active dispute. Posting it violates compliance. Decision is to escalate to legal and don't process.
-
-Why it matters financially:
-
-- 2.3 trillion dollars in AR processed annually across US companies
-- 1.4 million dollars per day of working capital trapped for every DSO (Days Sales Outstanding) increase for a $500M revenue company
-- 8-10 edge cases per hour is what an experienced AR analyst can handle
-- 35 edge cases in 60 seconds is what our system handles
-
-Our system handles 35 different edge case patterns including partial payments, truncated names, factoring, multi-invoice bundles, OFAC holds, disputed invoices, FX conversions, and more. Each one requires reasoning, not just matching.
-
----
-
-## How It Works: 5 Specialized AI Agents on Microsoft Azure
-
-Instead of one AI trying to match transactions AND reason about exceptions AND generate postings, we built 5 specialists:
-
-Agent 1: Bank Statement Intelligence (15 seconds)
-
-Reads bank transactions, normalizes payer names (fixes SWIFT truncation, DBA names), parses invoice references, flags suspicious items.
-
-Agent 2: AR Ledger Builder (20 seconds)
-
-Builds customer lookup tables, identifies aliases and cross-references, flags disputes and holds, prepares invoice index for matching.
-
-Agent 3: Reconciliation Engine (35 seconds)
-
-Tries 8 matching strategies (exact match, partial match, multi-invoice, FX conversion, etc.), uses Python code to verify every dollar (no hallucination), pre-checks compliance holds and disputed invoices.
-
-Agent 4: Mismatch Reasoning (15 seconds)
-
-Uses a reasoning model to analyze exceptions. Questions: Is this a legitimate deduction or fraud? Should this route to deductions team or legal? Assigns risk tier and SLA to each exception.
-
-Agent 5: Cash Posting (10 seconds)
-
-Generates GL account routing, creates workqueue items sorted by urgency, produces ERP-ready posting instructions.
-
-Why this architecture:
-
-Sequential hand-off (not parallel swarm): This means dependencies are real, not design choices. Agents 1 and 2 must finish before Agent 3 can start. This creates a clean, auditable chain.
-
-Right model for right task: Agents 1 and 2 use GPT-4o-mini (fast, cheap). Agent 3 uses GPT-4o (complex logic). Agent 4 uses GPT-5 (reasoning on exceptions). This saves 60 percent cost versus running everything on GPT-4o.
-
-Built entirely on Microsoft Azure: Azure OpenAI Service (not public OpenAI), AsyncAzureOpenAI (Python async), Azure Blob Storage (immutable audit trail), Azure Identity (no API keys in code), Azure Monitor and OpenTelemetry (end-to-end tracing).
-
-Why Microsoft matters: Your financial data stays in your Azure tenant. Never touches shared infrastructure. Microsoft doesn't use it to train future models. For finance, this is non-negotiable.
-
----
-
-## Live Demo: What Judges Will See
-
-Watch it live: https://cash-application-foundry.vercel.app
-
-Real-time agent execution (90 seconds total):
-
-- Agent 1 normalizes bank data (15 seconds)
-- Agent 2 builds invoice index (20 seconds)
-- Agent 3 matches transactions (35 seconds)
-- Agent 4 reasons about exceptions (15 seconds)
-- Agent 5 generates postings (10 seconds)
-
-Results with 35 sample transactions:
-
-Matched cleanly (32 of 35 = 91 percent auto-post rate):
-
-- Transaction ID | Amount | Customer | Invoice | GL Account | Status: AUTO-POST
-
-Exceptions with reasoning (3 of 35):
-
-| Transaction | Amount | Issue | Agent 4 Reasoning | Routing |
-|---|---|---|---|---|
-| TXN-7 | $50,000 | Name mismatch: ACE Capital vs Riverside Mfg | Factoring relationship detected. ACE is a known factor. Invoice legitimately assigned. | Route to Riverside Mfg account |
-| TXN-15 | $35,000 | Payer name matches OFAC list | Name on sanctions screening. Compliance hold required. Do not process. | COMPLIANCE HOLD, Escalate to Legal |
-| TXN-23 | $45,000 | Short pay on disputed invoice | Invoice in active legal dispute. Posting would violate compliance. | LEGAL HOLD, Escalate to Legal |
-
-Audit trail: Every decision logged, immutable, ready for auditors. SOX-compliant decision chain from raw bank data through agent 1 through agent 2 and onwards to final posting.
-
-Business value: 6 hours of manual work compressed into 60 seconds. 32 auto-posted (zero AR analyst touch). 3 exceptions routed with complete reasoning and SLA.
-
----
-
-## Run It Locally in 5 Minutes
-
-Prerequisites: Python 3.11 or higher, Node.js 18 or higher, Git
-
-Step 1: Clone and start the agents
-
-```bash
-git clone https://github.com/vinaygangidi/cash-application-foundry.git
-cd cash-application-foundry/backend
-
-python -m venv .venv
-source .venv/bin/activate
-
-pip install -r requirements.txt
-uvicorn main:app --port 8001 --reload
+```
+Bank statement + AR ledger
+        │
+        ▼
+1. BankStatementIntelligenceAgent   normalize payer names, fix SWIFT truncation, flag suspicious items
+        ▼
+2. ARLedgerAgent                    build customer index, aging, alias registry, compliance flags
+        ▼
+3. ReconciliationAgent              8-tier matching hierarchy, arithmetic in a Code Interpreter sandbox
+        ▼
+4. MismatchReasoningAgent           reason over exceptions only; assign risk tier, GL code, action
+        ▼
+5. CashPostingAgent                 emit GL posting instructions and workqueue items
+        ▼
+GL postings + exception workqueue
 ```
 
-Step 2: Start the UI (open new terminal)
+Orchestration is hand-rolled in `backend/agents/cash_app.py` — no CrewAI, LangGraph, or
+Semantic Kernel. Agents 1, 2, 4, and 5 use streaming Chat Completions with
+`temperature=0` and `seed=42`, retried three times with 2-second backoff. Agent 3 uses the
+Azure OpenAI Assistants API with the `code_interpreter` tool, falling back to Chat
+Completions if Assistants is unavailable.
 
-```bash
-cd ../frontend
-npm install
-NEXT_PUBLIC_API_URL=http://localhost:8001 npm run dev
-```
+Every stage streams to the browser over Server-Sent Events, with a 10-second keepalive to
+prevent proxy timeouts.
 
-Step 3: Open and watch
+### Endpoints
 
-Visit http://localhost:3000
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/health` | Status, plus the current `use_fixtures` value |
+| `GET` | `/samples` | List the 10 sample datasets |
+| `GET` | `/demo-data?sample=NN` | Load one sample's bank statement and AR ledger |
+| `POST` | `/analyze` | Run the swarm, streaming SSE |
 
-Click "Load Demo Data"
+## Quickstart
 
-Click "Run Cash Application"
+> **Demo mode does not work on a fresh clone.** `USE_FIXTURES` defaults to `true`, which
+> replays `backend/data/cash_app_results.json` — a file that is **not tracked in this
+> repository**. Without it you get
+> `{"event":"error","message":"Demo data file not found."}`. Either supply that file or
+> run live Azure mode as shown in step 3.
 
-Watch all 5 agents execute in real-time
+1. Start the backend:
+   ```bash
+   git clone https://github.com/vinaygangidi/cash-application-foundry.git
+   cd cash-application-foundry/backend
 
-Each agent's work streams to your browser via Server-Sent Events (SSE). No buffering, complete transparency. Demo mode requires no Azure credentials. Everything runs on sample data.
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
 
-For production mode with Azure: See IMPLEMENTATION_GUIDE.md
+2. Configure Azure credentials in `backend/.env`:
+   ```bash
+   cp .env.example .env
+   # Set AZURE_AI_ENDPOINT and AZURE_API_KEY
+   ```
 
----
+3. Run in live Azure mode:
+   ```bash
+   USE_FIXTURES=false uvicorn main:app --port 8001 --reload
+   ```
 
-## Documentation and Deep Dives
+4. Start the UI in a second terminal:
+   ```bash
+   cd ../frontend
+   npm install
+   npm run dev
+   ```
 
-All documentation available at: https://vinaygangidi.github.io/cash-application-foundry/
+5. Open http://localhost:3000, click **Load Demo Data**, then **Run Cash Application**.
 
-How It Works: https://github.com/vinaygangidi/cash-application-foundry/blob/main/docs/how-it-works.md (15 minutes)
-Business explanation, real-world examples, ROI calculation, ERP integration
+The frontend reaches the backend through a Next.js rewrite configured by `BACKEND_URL`
+(default `http://localhost:8001`), so no frontend environment variable is needed for local
+use.
 
-Quick Visual Guide: https://github.com/vinaygangidi/cash-application-foundry/blob/main/docs/QUICK_VISUAL_GUIDE.md (10 minutes)
-Diagrams, data flow, before and after comparison, 35 edge case catalog
+### Registering agents in Azure AI Foundry
 
-System Design: https://github.com/vinaygangidi/cash-application-foundry/blob/main/docs/SYSTEM_DESIGN.md (1 hour)
-Complete architecture, why AsyncAzureOpenAI (not third-party frameworks), Azure services integration, security model, OFAC pre-checks, production roadmap (Phase 1, 2, and 3)
+`backend/scripts/register_agents.py` registers the five agents as Foundry resources. It
+needs three variables that `.env.example` does not document: `AZURE_SUBSCRIPTION_ID`,
+`AZURE_RESOURCE_GROUP`, and `AZURE_PROJECT_NAME`.
 
-Implementation Guide: https://github.com/vinaygangidi/cash-application-foundry/blob/main/docs/IMPLEMENTATION_GUIDE.md (30 minutes)
-Local setup, Azure AI Foundry configuration, Railway and Vercel deployment, environment variables, troubleshooting
+## Configuration
 
-Architecture Docs: https://vinaygangidi.github.io/cash-application-foundry/architecture.html
-Visual diagrams and system flow
+| Name | Required | Default | Description |
+|---|---|---|---|
+| `AZURE_AI_ENDPOINT` | Yes | none | Azure AI Foundry endpoint. Raises `EnvironmentError` if unset in live mode |
+| `AZURE_API_KEY` | No | `""` | API key. When empty, falls back to `DefaultAzureCredential` |
+| `AZURE_OPENAI_API_VERSION` | No | `2024-12-01-preview` | Azure OpenAI API version |
+| `USE_FIXTURES` | No | `true` | `true` replays demo JSON (see the warning above); `false` calls Azure |
+| `MODEL_BANK_AGENT` | No | `gpt-4o-mini` | Model for agent 1 |
+| `MODEL_AR_AGENT` | No | `gpt-4o-mini` | Model for agent 2 |
+| `MODEL_RECON_AGENT` | No | `gpt-4o` | Model for agent 3 |
+| `MODEL_REASONING_AGENT` | No | `gpt-4o` | Model for agent 4 |
+| `MODEL_POSTING_AGENT` | No | `gpt-4o` | Model for agent 5 |
+| `AZURE_STORAGE_ACCOUNT_URL` | No | `""` | Blob endpoint for the run audit trail, via `DefaultAzureCredential`. The original demo storage account has been deleted; point this at a new one to re-enable |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | No | `""` | Enables Azure Monitor if set. The original demo instance has been deleted; provision a new one to re-enable |
+| `AZURE_SUBSCRIPTION_ID` | Script only | `""` | Required by `register_agents.py` |
+| `AZURE_RESOURCE_GROUP` | Script only | `""` | Required by `register_agents.py` |
+| `AZURE_PROJECT_NAME` | Script only | `""` | Required by `register_agents.py` |
+| `BACKEND_URL` | No | `http://localhost:8001` | Frontend rewrite target for `/api/*` |
 
----
+The `MODEL_*` defaults above are what the agent modules use at runtime.
+`backend/scripts/register_agents.py` declares different defaults for three of them
+(`gpt-5.4-mini` for agents 1 and 2, `gpt-5` for agent 4), so registration and execution can
+disagree unless you set the variables explicitly.
 
-## Team
+## Limitations
 
-Vinay Gangidi
+- **Demo mode is broken on a fresh clone.** `backend/data/cash_app_results.json` is
+  required by the default `USE_FIXTURES=true` path and is not tracked in git. This is the
+  first thing a reader hits.
+- **No deterministic matching or policy layer.** Matching, exception reasoning, and posting
+  decisions are all model output. Agent 3 executes its arithmetic in a Code Interpreter
+  sandbox, but nothing in the backend independently verifies an allocation before it is
+  presented as an auto-post candidate. A sibling project,
+  [ledger-sense](https://github.com/vinaygangidi/ledger-sense), implements the
+  deterministic-guardrail approach for comparison.
+- **No tests.** No test suite and no CI. `.github/` contains only `copilot-instructions.md`.
+- **Azure demo resources have been decommissioned.** The Application Insights instance and
+  the Blob Storage account used during the hackathon no longer exist. The integration code
+  remains in place, so telemetry and the Blob audit trail come back by provisioning new
+  resources and setting `APPLICATIONINSIGHTS_CONNECTION_STRING` and
+  `AZURE_STORAGE_ACCOUNT_URL`.
+- **Audit-trail failures are silent, which matters once it is reconnected.** Application
+  Insights initialization and every Blob Storage write are wrapped in bare
+  `except Exception: pass`, and `/health` reports only whether the client object was
+  constructed — not whether uploads succeed. A misconfigured audit trail is therefore
+  indistinguishable from an intentionally unconfigured one. Worth adding an explicit
+  health signal before relying on this for traceability.
+- **CORS is wide open.** `allow_origins=["*"]` with all methods and headers.
+- **No field allowlist on model payloads.** Agent-selected slices of the full bank and AR
+  JSON are sent to Azure OpenAI. Bank account numbers, routing numbers, or tax IDs present
+  in input data are not stripped, and no test asserts otherwise.
+- **No authentication.** Any caller who can reach the API can run the swarm.
+- **Sample data is smaller than the headline numbers suggest.** Ten samples hold 81
+  transactions in total, the largest being 9. Earlier versions of this README described "35
+  transactions in under 60 seconds" and a "91 percent auto-post rate" on a 35-transaction
+  run; no fixture in the repository contains 35 transactions, and those figures are not
+  reproducible from this code.
+- **`LICENSE` was missing** despite the README asserting MIT. Added.
+- **Duplicate of a sibling repository.** `cash-app-foundry-iq` is an independent init of the
+  same project (unrelated git history) and holds files this one lacks, including
+  `backend/agents/foundry_client.py`, deploy configs, and the demo results JSON.
+- **Timings are illustrative.** Per-agent durations previously quoted in this README were
+  from one observed run, not benchmarks, and depend on model, region, and payload size.
 
-Email: vinay.gangidi@gmail.com
+## Documentation
 
-Built for Microsoft Build AI Hackathon 2026
+| Document | Contents |
+|---|---|
+| [docs/how-it-works.md](docs/how-it-works.md) | Business explanation, worked examples, ERP integration |
+| [docs/QUICK_VISUAL_GUIDE.md](docs/QUICK_VISUAL_GUIDE.md) | Diagrams, data flow, edge-case catalog |
+| [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) | Architecture, Azure integration, security model, roadmap |
+| [docs/IMPLEMENTATION_GUIDE.md](docs/IMPLEMENTATION_GUIDE.md) | Azure setup, Railway and Vercel deployment, troubleshooting |
 
-Theme: Agent Swarms
+## License
 
-Platform: Azure AI Foundry + AsyncAzureOpenAI
-
----
-
-License: MIT - See LICENSE file
+MIT — see [LICENSE](LICENSE).
